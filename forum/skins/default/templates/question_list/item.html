@@ -2,8 +2,8 @@
 <div class="short-summary">
     <div class="counts">{% if favorite_count %}
         <div class="favorites">
-            <span class="favorite-mark{% if question.favourite_count %} on{% endif %}"></span>
-            <div class="item-count">{{question.favourite_count|intcomma}}</div>
+            <span class="favorite-mark{% if question.favorite_count %} on{% endif %}"></span>
+            <div class="item-count">{{question.favorite_count|intcomma}}</div>
         </div>
         {% endif %}
         <div class="votes">
@@ -36,5 +36,5 @@
             <a class="tag-link-{{ tag }}" href="{% url tag_questions tag|urlencode %}" title="{% trans "see questions tagged" %} '{{ tag }}'" rel="tag">{{ tag }}</a>{% endfor %}
         </div>
     </div>
-
 </div>
+
