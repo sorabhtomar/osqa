@@ -7,6 +7,8 @@ from forum import settings
 from forum.settings import APP_SHORT_NAME
 from forum.utils.mail import send_template_email
 
+from django.contrib import messages
+
 class UserJoinsAction(ActionProxy):
     verb = _("joined")
 
@@ -76,8 +78,7 @@ class BonusRepAction(ActionProxy):
                     message=_("Congratulations, you have been awarded an extra %s reputation points.") % self._value +
                     '<br />%s' % self.extra.get('message', _('Thank you')))
         else:
-            self._affected.message_set.create(
-                    message=_("You have been penalized in %s reputation points.") % self._value +
+            messages.info(request, _("You have penalized %s in %s reputation points.") % (self._affected, self._value) +
                     '<br />%s' % self.extra.get('message', ''))
 
     def describe(self, viewer=None):
@@ -109,7 +110,6 @@ class AwardPointsAction(ActionProxy):
     def repute_users(self):
         self.repute(self._affected, self._value)
         self.repute(self.user, -self._value)
-
 
         self._affected.message_set.create(
                 message=_("Congratulations, you have been awarded an extra %(points)s reputation %(points_label)s on <a href=\"%(answer_url)s\">this</a> answer.") % {

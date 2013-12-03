@@ -209,15 +209,6 @@ class User(BaseModel, DjangoUser):
             sub_settings = SubscriptionSettings(user=self)
             sub_settings.save()
 
-    def get_messages(self):
-        messages = []
-        for m in self.message_set.all():
-            messages.append(m.message)
-        return messages
-
-    def delete_messages(self):
-        self.message_set.all().delete()
-
     @models.permalink
     def get_profile_url(self):
         keyword_arguments = {

@@ -1,5 +1,4 @@
 """Utilities for working with HTML."""
-#import html5lib
 from html5lib import sanitizer, serializer, tokenizer, treebuilders, treewalkers, HTMLParser
 from urllib import quote_plus
 from django.utils.html import strip_tags

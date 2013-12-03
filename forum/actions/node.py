@@ -4,6 +4,8 @@ from forum.models.action import ActionProxy
 from forum.models import Comment, Question, Answer, NodeRevision
 import logging
 
+from django.contrib import messages
+
 class NodeEditAction(ActionProxy):
     def create_revision_data(self, initial=False, **data):
         revision_data = dict(summary=data.get('summary', (initial and _('Initial revision') or '')), body=data['text'])
@@ -28,7 +30,7 @@ class AskAction(NodeEditAction):
         question.save()
         self.node = question
 
-        self.user.message_set.create(message=self.describe(self.user))
+        messages.info(request, self.describe(self.user))
 
     def describe(self, viewer=None):
         return _("%(user)s asked %(question)s") % {
@@ -47,7 +49,7 @@ class AnswerAction(NodeEditAction):
     def process_action(self):
         self.node.question.reset_answer_count_cache()
 
-        self.user.message_set.create(message=self.describe(self.user))
+        messages.info(request, self.describe(self.user))
 
 
     def describe(self, viewer=None):

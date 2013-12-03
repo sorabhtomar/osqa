@@ -12,14 +12,8 @@ from django.utils.translation import ugettext as _
 
 import settings
 
-try:
-    from json import load as load_json
-except Exception:
-    from django.utils.simplejson import JSONDecoder
+from json import load as load_json
 
-    def load_json(json):
-        decoder = JSONDecoder()
-        return decoder.decode(json.read())
 
 class FacebookAuthConsumer(AuthenticationConsumer):
 
@@ -33,7 +27,7 @@ class FacebookAuthConsumer(AuthenticationConsumer):
         facebook_api_authentication_url = "https://graph.facebook.com/oauth/authorize?" + urlencode(args)
 
         return facebook_api_authentication_url
-    
+
     def process_authentication_request(self, request):
         try:
             args = dict(client_id=settings.FB_API_KEY, redirect_uri="%s%s" % (django_settings.APP_URL, request.path))

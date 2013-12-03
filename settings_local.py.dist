@@ -22,7 +22,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 TEMPLATE_DEBUG = DEBUG
 INTERNAL_IPS = ('127.0.0.1',)
-
+ALLOWED_HOSTS = ('yourhostname.com',)
 
 DATABASES = {
     'default': {
