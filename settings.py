@@ -53,6 +53,9 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
+STATIC_URL = '/m/'
+STATICFILES_DIRS = TEMPLATE_DIRS
+
 # User settings
 from settings_local import *
 
@@ -114,6 +117,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django.contrib.messages',
+    'django.contrib.staticfiles',
     'forum',
 ]
 
