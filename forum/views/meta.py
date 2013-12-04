@@ -4,7 +4,6 @@ from itertools import groupby
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
-from django.views.static import serve
 from django.views.decorators.cache import cache_page
 from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
@@ -32,16 +31,6 @@ def custom_css(request):
 def static(request, title, content):
     return render_to_response('static.html', {'content' : content, 'title': title},
                               context_instance=RequestContext(request))
-
-def media(request, skin, path):
-    response = serve(request, "%s/media/%s" % (skin, path),
-                 document_root=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'skins').replace('\\', '/'))
-    content_type = response['Content-Type']
-    if ('charset=' not in content_type):
-        if (content_type.startswith('text') or content_type=='application/x-javascript'):
-            content_type += '; charset=utf-8'
-            response['Content-Type'] = content_type
-    return response
 
 
 def markdown_help(request):

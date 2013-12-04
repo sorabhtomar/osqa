@@ -48,6 +48,9 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 ALLOW_FILE_TYPES = ('.jpg', '.jpeg', '.gif', '.bmp', '.png', '.tiff')
 ALLOW_MAX_FILE_SIZE = 1024 * 1024
 
+STATIC_URL = '/m/'
+STATICFILES_DIRS = TEMPLATE_DIRS
+
 # User settings
 from settings_local import *
 
@@ -118,6 +121,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sitemaps',
     'django.contrib.markup',
+    'django.contrib.staticfiles',
     'forum',
 ]
 

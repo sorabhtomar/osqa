@@ -4,6 +4,7 @@ import os.path
 from forum import settings
 from django.conf.urls.defaults import *
 from django.conf import settings as djsettings
+from django.conf.urls.static import static
 from django.contrib import admin
 from forum import views as app
 from forum.sitemap import OsqaSitemap
@@ -38,9 +39,6 @@ core_urls = (
 
     url(r'^favicon\.ico$', app.meta.favicon),
     url(r'^cstyle\.css$', app.meta.custom_css, name='custom_css'),
-    
-    url(r'^m/(?P<skin>\w+)/media/(?P<path>.*)$', app.meta.media , name='osqa_media'),
-    url(r'^%s(?P<path>.*)$' % _('upfiles/'), 'django.views.static.serve', {'document_root': os.path.join(APP_PATH, 'upfiles').replace('\\', '/')}, name='uploaded_file',),
     
     url(r'^%s$' % _('faq/'), app.meta.static, {'content': settings.FAQ_PAGE_TEXT, 'title': _('FAQ')}, name='faq'),
     url(r'^%s$' % _('about/'), app.meta.static, {'content': settings.ABOUT_PAGE_TEXT, 'title': _('About')}, name='about'),
@@ -161,6 +159,7 @@ core_urls = (
     
 )
 
+
 from forum.modules import get_modules_script
 
 module_patterns = get_modules_script('urls')
@@ -190,4 +189,9 @@ def urlname(name):
     return name
 
 urlpatterns += patterns('', *core_defined)
+
+if djsettings.DEBUG:
+    urlpatterns += static(djsettings.STATIC_URL, document_root=djsettings.STATIC_ROOT)
+    upload_dir = os.path.join(APP_PATH, 'upfiles').replace('\\', '/')
+    urlpatterns += static(r'^%s(?P<path>.*)$' % _('upfiles/'), document_root=upload_dir)
 
