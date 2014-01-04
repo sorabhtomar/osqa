@@ -4,7 +4,6 @@ import sys
 
 SITE_ID = 1
 
-ADMIN_MEDIA_PREFIX = '/admin_media/'
 SECRET_KEY = 'a;::qCl1mfh?avagttOJ;8f5Rr54d,9qy7;o15M2cYO75?OQo51u3LnQ;!8N.:,7'
 
 CACHE_MAX_KEY_LENGTH = 235
