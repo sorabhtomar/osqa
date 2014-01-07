@@ -61,8 +61,8 @@ from settings_local import *
 template_loaders = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    'forum.modules.template_loader.module_templates_loader',
-    'forum.skins.load_template_source',
+    'forum.modules.template_loader.ModulesTemplateLoader',
+    'forum.skins.SkinsTemplateLoader',
 )
 TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [ ('django.template.loaders.cached.Loader', template_loaders) ]
 

@@ -1,151 +1,76 @@
-from django.conf import settings
-from django.template.loaders import filesystem
-from django.template import TemplateDoesNotExist, Template as DJTemplate
-from django.conf import settings as djsettings
-import os.path
+from os import path
 import logging
 
-UNEXISTENT_TEMPLATE = object()
+from django.core.cache.backends import locmem
+from django.conf import settings
+from django.utils import _os
+from django.template.loaders import filesystem
 
-SKINS_FOLDER = os.path.dirname(__file__)
-SKIN_TEMPLATES_FOLDER = 'templates'
+SKINS_FOLDER = path.dirname(__file__)
 DEFAULT_SKIN_NAME = 'default'
+
+def _list_dirs(include_common=False):
+    result = [_os.safe_join(SKINS_FOLDER, settings.OSQA_DEFAULT_SKIN)]
+
+    skin_name = settings.OSQA_DEFAULT_SKIN
+    while True:
+        parent_txt = _os.safe_join(SKINS_FOLDER, skin_name, 'parent.txt')
+        if not path.isfile(parent_txt):
+            break
+        with open(parent_txt, 'rb') as fp:
+            skin_name = fp.readline().decode(settings.FILE_CHARSET).strip()
+        p = _os.safe_join(SKINS_FOLDER, skin_name)
+        if not path.isdir(p):
+            break
+        result.append(p)
+
+    result.append(_os.safe_join(SKINS_FOLDER, DEFAULT_SKIN_NAME))
+    if include_common:
+        result.append(_os.safe_join(SKINS_FOLDER, 'commmon'))
+    return result
+
+
+TEMPLATE_DIRS = _list_dirs()
+MEDIA_DIRS = _list_dirs(include_common=True)
+SKIN_TEMPLATES_FOLDER = 'templates'
 FORCE_DEFAULT_PREFIX = "%s/" % DEFAULT_SKIN_NAME
 
 
-class Template(object):
-
-    def __init__(self, file_name):
-        self._file_name = file_name
-        self._loaded = False
-
-    def _get_mtime(self):
-        return os.path.getmtime(self._file_name)
-
-    def _check_mtime(self):
-        if self._last_mtime is None:
-            return False
-
-        return self._last_mtime == self._get_mtime()
-
-    def _load(self):
-        try:
-            f = open(self._file_name, 'r')
-            self._source = f.read()
-            f.close()
-            self._loaded = True
-
-            self._last_mtime = self._get_mtime()
-        except:
-            self._loaded = False
-            self._last_mtime = None
-
-            raise
-
-    def return_tuple(self):
-        if not (self._loaded and self._check_mtime()):
-            try:
-                self._load()
-            except:
-                raise TemplateDoesNotExist, self._file_name
-
-        return self._source, self._file_name
-
-class BaseTemplateLoader(object):
-    is_usable = True
-
-    def __init__(self):
-        self.cache = {}
-
-    def __call__(self, name=None, dirs=None):
-        if name is None:
-            return self
-
-        return self.load_template(name, dirs)
-
-    def load_template(self, name, dirs=None):
-        if not djsettings.TEMPLATE_DEBUG:
-            if name in self.cache:
-                if self.cache[name] is UNEXISTENT_TEMPLATE:
-                    raise TemplateDoesNotExist, name
-
-                try:
-                    return self.cache[name].return_tuple()
-                except:
-                    del self.cache[name]
-
-        template = self.load_template_source(name, dirs)
-
-        if template is not None:
-            if not djsettings.DEBUG:
-                self.cache[name] = template
-
-            return template.return_tuple()
-        else:
-            if not djsettings.DEBUG:
-                self.cache[name] = UNEXISTENT_TEMPLATE
-
-            raise TemplateDoesNotExist, name
-
+class SkinsTemplateLoader(filesystem.Loader):
     def load_template_source(self, name, dirs=None):
-        raise NotImplementedError
-
-
-class SkinsTemplateLoader(BaseTemplateLoader):
-
-    def load_template_source(self, name, dirs=None):
-
+        name = '%s/%s' % (SKIN_TEMPLATES_FOLDER, name)
         if name.startswith(FORCE_DEFAULT_PREFIX):
+            name = name[len(FORCE_DEFAULT_PREFIX):]
+            dirs = [_os.safe_join(SKINS_FOLDER, DEFAULT_SKIN_NAME, SKIN_TEMPLATES_FOLDER)]
+        else:
+            dirs = TEMPLATE_DIRS
+        return super(SkinsTemplateLoader, self).load_template_source(name, dirs)
 
-            file_name = os.path.join(SKINS_FOLDER, DEFAULT_SKIN_NAME, SKIN_TEMPLATES_FOLDER, name[len(FORCE_DEFAULT_PREFIX):])
 
-            if os.path.exists(file_name):
-                return Template(file_name)
-            else:
-                return None
-
-        for skin in (settings.OSQA_DEFAULT_SKIN, DEFAULT_SKIN_NAME):
-            file_name = os.path.join(SKINS_FOLDER, skin, SKIN_TEMPLATES_FOLDER, name)
-
-            if os.path.exists(file_name):
-                return Template(file_name)
-
-        return None
-
-load_template_source = SkinsTemplateLoader()
-
+__media_src_cache = locmem.LocMemCache('osqa-media-src-cache', {})
 
 def find_media_source(url):
     """returns url prefixed with the skin name
     of the first skin that contains the file 
     directories are searched in this order:
-    settings.OSQA_DEFAULT_SKIN, then 'default', then 'commmon'
+    settings.OSQA_DEFAULT_SKIN, then 'default', then 'common'
     if file is not found - returns None
     and logs an error message
     """
     while url[0] == '/': url = url[1:]
-    d = os.path.dirname
-    n = os.path.normpath
-    j = os.path.join
-    f = os.path.isfile
-    skins = n(j(d(d(__file__)),'skins'))
-    try:
-        media = os.path.join(skins, settings.OSQA_DEFAULT_SKIN, url)
-        assert(f(media))
-        use_skin = settings.OSQA_DEFAULT_SKIN
-    except:
-        try:
-            media = j(skins, 'default', url)
-            assert(f(media))
-            use_skin = 'default'
-        except:
-            media = j(skins, 'common', url)
-            try:
-                assert(f(media))
-                use_skin = 'common'
-            except:
-                logging.error('could not find media for %s' % url)
-                use_skin = ''
-                return None
-    return use_skin + '/' + url
 
+    if not settings.DEBUG:
+        cached = __media_src_cache.get(url)
+        if cached:
+            return cached
+
+    for skin_path in MEDIA_DIRS:
+        filename = path.join(skin_path, url)
+        if path.isfile(filename):
+            result = filename[len(SKINS_FOLDER)+1:]
+            if not settings.DEBUG:
+                __media_src_cache.set(url, result)
+            return result
+
+    logging.error('could not find media for %s' % url)
+    return None

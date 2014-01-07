@@ -1,7 +1,12 @@
-import os, re
+import re
+from os import path
 
-from forum.skins import load_template_source as skins_template_loader, Template, BaseTemplateLoader
 from django.conf import settings
+from django.utils._os import safe_join
+from django.template.loaders import filesystem
+
+from forum import skins
+
 
 MODULES_TEMPLATE_PREFIX = 'modules/'
 NO_OVERRIDE_TEMPLATE_PREFIX = 'no_override/'
@@ -9,36 +14,24 @@ MODULES_TEMPLATE_FOLDER = 'templates'
 MODULES_TEMPLATE_OVERRIDES_FOLDER = 'template_overrides'
 
 TEMPLATE_OVERRIDE_LOOKUP_PATHS = [f for f in [
-        os.path.join(os.path.dirname(m.__file__), MODULES_TEMPLATE_OVERRIDES_FOLDER) for m in settings.MODULE_LIST
-    ] if os.path.exists(f)
+        safe_join(path.dirname(m.__file__), MODULES_TEMPLATE_OVERRIDES_FOLDER) for m in settings.MODULE_LIST
+    ] if path.exists(f)
 ]
 
-class ModulesTemplateLoader(BaseTemplateLoader):
 
-    modules_re = re.compile('^%s(\w+)\/(.*)$' % MODULES_TEMPLATE_PREFIX)
+class ModulesTemplateLoader(filesystem.Loader):
+
+    __MODULES_RE = re.compile('^%s(\w+)\/(.*)$' % MODULES_TEMPLATE_PREFIX)
+    __SKIN_TEMPLATE_LOADER = skins.SkinsTemplateLoader()
 
     def load_template_source(self, name, dirs=None):
-        template = None
-
         if name.startswith(MODULES_TEMPLATE_PREFIX):
-            match = self.modules_re.search(name)
-            file_name = os.path.join(settings.MODULES_FOLDER, match.group(1), MODULES_TEMPLATE_FOLDER, match.group(2))
-
-            if os.path.exists(file_name):
-                template = Template(file_name)
-
+            match = self.__MODULES_RE.search(name)
+            name = match.group(2)
+            dirs = [safe_join(settings.MODULES_FOLDER, match.group(1), MODULES_TEMPLATE_FOLDER)]
+            return super(ModulesTemplateLoader, self).load_template_source(name, dirs)
         elif name.startswith(NO_OVERRIDE_TEMPLATE_PREFIX):
-            return skins_template_loader.load_template_source(name[len(NO_OVERRIDE_TEMPLATE_PREFIX):], dirs)
-
+            name = name[len(NO_OVERRIDE_TEMPLATE_PREFIX):]
+            return self.__SKIN_TEMPLATE_LOADER.load_template_source(name, dirs)
         else:
-            for override_path in TEMPLATE_OVERRIDE_LOOKUP_PATHS:
-                file_name = os.path.join(override_path, name)
-
-                if os.path.exists(file_name):
-                    template = Template(file_name)
-                    break
-
-
-        return template
-
-module_templates_loader = ModulesTemplateLoader()
+            return super(ModulesTemplateLoader, self).load_template_source(name, TEMPLATE_OVERRIDE_LOOKUP_PATHS)
