@@ -51,22 +51,13 @@ ALLOW_MAX_FILE_SIZE = 1024 * 1024
 # User settings
 from settings_local import *
 
-if DEBUG:
-    TEMPLATE_LOADERS = [
-        'django.template.loaders.filesystem.load_template_source',
-        'django.template.loaders.app_directories.load_template_source',
-        'forum.modules.template_loader.module_templates_loader',
-        'forum.skins.load_template_source',
-    ]
-else:
-    TEMPLATE_LOADERS = [
-        ('django.template.loaders.cached.Loader',(
-            'django.template.loaders.filesystem.load_template_source',
-            'django.template.loaders.app_directories.load_template_source',
-            'forum.modules.template_loader.module_templates_loader',
-            'forum.skins.load_template_source',
-            )),
-    ]
+template_loaders = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'forum.modules.template_loader.ModulesTemplateLoader',
+    'forum.skins.SkinsTemplateLoader',
+)
+TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [ ('django.template.loaders.cached.Loader', template_loaders) ]
 
 try:
     if len(FORUM_SCRIPT_ALIAS) > 0:
