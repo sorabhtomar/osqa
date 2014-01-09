@@ -494,6 +494,9 @@ class Node(BaseModel, NodeContent):
         super(Node, self).delete(*args, **kwargs)
 
     def save(self, *args, **kwargs):
+        if self.parent_id and not self.abs_parent_id:
+            self.abs_parent = self.parent.absolute_parent
+
         if not self.id:
             self.node_type = self.get_type()
             super(BaseModel, self).save(*args, **kwargs)
@@ -502,11 +505,8 @@ class Node(BaseModel, NodeContent):
             self.activate_revision(self.author, self.active_revision)
             self.update_last_activity(self.author, time=self.added_at)
 
-        if self.parent_id and not self.abs_parent_id:
-            self.abs_parent = self.parent.absolute_parent
-        
         tags_changed = self._process_changes_in_tags()
-        
+
         super(Node, self).save(*args, **kwargs)
         if tags_changed:
             if self.tagnames.strip():
