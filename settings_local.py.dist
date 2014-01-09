@@ -3,14 +3,33 @@ import os.path
 
 SITE_SRC_ROOT = os.path.dirname(__file__)
 LOG_FILENAME = 'django.osqa.log'
-
-#for logging
-import logging
-logging.basicConfig(
-    filename=os.path.join(SITE_SRC_ROOT, 'log', LOG_FILENAME),
-    level=logging.ERROR,
-    format='%(pathname)s TIME: %(asctime)s MSG: %(filename)s:%(funcName)s:%(lineno)d %(message)s',
-)
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '%(pathname)s TIME: %(asctime)s MSG: %(filename)s:%(funcName)s:%(lineno)d %(message)s',
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'formatter': 'default',
+            'filename': os.path.join(SITE_SRC_ROOT, 'log', LOG_FILENAME),
+        },
+    },
+    'loggers' : {
+        # ensure that all log entries are propagated to root
+        'django': { 'propagate': True },
+        'django.request': { 'propagate': True },
+        'django.security': { 'propagate': True },
+        'py.warnings': { 'propagate': True },
+    },
+    'root': {
+        'handlers': ['file'],
+        'level': 'DEBUG',
+    },
+}
 
 #ADMINS and MANAGERS
 ADMINS = ()
