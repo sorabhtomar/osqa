@@ -83,4 +83,9 @@ label = _("Send digest only to validated users"),
 help_text = _("If checked the daily digest won't be sent to users that haven't validated their emails."),
 required=False))
 
+SEND_WELCOME_EMAILS = Setting('SEND_WELCOME_EMAILS', True, EMAIL_SET, dict(
+label = _("Send welcome emails"),
+help_text = _("If checked a welcome email will be sent to new users joining the community."),
+required=False))
+
 EMAIL_DIGEST_FLAG = Setting('EMAIL_DIGEST_FLAG', None)
