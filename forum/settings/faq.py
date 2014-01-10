@@ -77,3 +77,8 @@ Please ask your question, help make our community better!
 label = "FAQ page text",
 help_text = " The faq page. ",
 widget=Textarea(attrs={'rows': '25'})))
+
+FAQ_LINK = Setting('FAQ_LINK', '', FAQ_SET, dict(
+label = _("FAQ link"),
+help_text = _("If not empty, faq page will redirect to this link rather than display the text above"),
+required=False))

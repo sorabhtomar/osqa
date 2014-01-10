@@ -39,10 +39,7 @@ core_urls = (
     url(r'^favicon\.ico$', app.meta.favicon),
     url(r'^cstyle\.css$', app.meta.custom_css, name='custom_css'),
     
-    url(r'^m/(?P<skin>\w+)/media/(?P<path>.*)$', app.meta.media , name='osqa_media'),
-    url(r'^%s(?P<path>.*)$' % _('upfiles/'), 'django.views.static.serve', {'document_root': os.path.join(APP_PATH, 'upfiles').replace('\\', '/')}, name='uploaded_file',),
-    
-    url(r'^%s$' % _('faq/'), app.meta.static, {'content': settings.FAQ_PAGE_TEXT, 'title': _('FAQ')}, name='faq'),
+    url(r'^%s$' % _('faq/'), app.meta.redirect_or_static, {'target': settings.FAQ_LINK, 'content': settings.FAQ_PAGE_TEXT, 'title': _('FAQ')}, name='faq'),
     url(r'^%s$' % _('about/'), app.meta.static, {'content': settings.ABOUT_PAGE_TEXT, 'title': _('About')}, name='about'),
     url(r'^%s$' % _('markdown_help/'), app.meta.markdown_help, name='markdown_help'), url(r'^opensearch\.xml$', app.meta.opensearch, name='opensearch'),
     url(r'^opensearch\.xml$', app.meta.opensearch, name='opensearch'),
