@@ -29,6 +29,12 @@ def favicon(request):
 def custom_css(request):
     return HttpResponse(or_preview(settings.CUSTOM_CSS, request), mimetype="text/css")
 
+def redirect_or_static(request, target, title, content):
+    target = target.strip()
+    if target:
+        return HttpResponseRedirect(str(target))
+    return static(request, title, content)
+
 def static(request, title, content):
     return render_to_response('static.html', {'content' : content, 'title': title},
                               context_instance=RequestContext(request))
