@@ -16,6 +16,8 @@ class UserJoinsAction(ActionProxy):
         self.repute(self.user, int(settings.INITIAL_REP))
 
     def process_action(self):
+        if not settings.SEND_WELCOME_EMAILS:
+            return
         hash = ValidationHash.objects.create_new(self.user, 'email', [self.user.email])
         send_template_email([self.user], "auth/welcome_email.html", {'validation_code': hash})
 
