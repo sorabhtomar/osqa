@@ -92,16 +92,24 @@ class TagNamesField(forms.CharField):
         data = value.strip().lower()
 
         split_re = re.compile(r'[ ,]+')
-        list = {}
-        for tag in split_re.split(data):
-            list[tag] = tag
+        list = dict([(tag, tag) for tag in split_re.split(data)])
+
+        if settings.ENFORCE_TAG_FORMAT_FLAG and settings.ENFORCE_TAG_FORMAT_RX and len(str(settings.ENFORCE_TAG_FORMAT_RX.strip())) > 0:
+            try:
+                regexp = re.compile(str(settings.ENFORCE_TAG_FORMAT_RX.strip()))
+                good_tags = [tag for tag in list.values() if regexp.match(tag)]
+                if len(good_tags) == 0:
+                    raise forms.ValidationError(mark_safe(_(settings.ENFORCE_TAG_FORMAT_ERROR_MESSAGE)))
+            except re.error:
+                logging.error("Error while trying to match tags against '%s'" % settings.ENFORCE_TAG_FORMAT_RX)
+                pass
 
         if len(list) > settings.FORM_MAX_NUMBER_OF_TAGS or len(list) < settings.FORM_MIN_NUMBER_OF_TAGS:
             raise forms.ValidationError(_('please use between %(min)s and %(max)s tags') % { 'min': settings.FORM_MIN_NUMBER_OF_TAGS, 'max': settings.FORM_MAX_NUMBER_OF_TAGS})
 
         list_temp = []
         tagname_re = re.compile(r'^[\w+#\.-]+$', re.UNICODE)
-        for key,tag in list.items():
+        for key, tag in list.items():
             if len(tag) > settings.FORM_MAX_LENGTH_OF_TAG or len(tag) < settings.FORM_MIN_LENGTH_OF_TAG:
                 raise forms.ValidationError(_('please use between %(min)s and %(max)s characters in you tags') % { 'min': settings.FORM_MIN_LENGTH_OF_TAG, 'max': settings.FORM_MAX_LENGTH_OF_TAG})
             if not tagname_re.match(tag):
