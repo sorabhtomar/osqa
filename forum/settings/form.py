@@ -1,5 +1,5 @@
-import os.path
 from base import Setting, SettingSet
+from django.forms.widgets import Textarea
 from django.utils.translation import ugettext_lazy as _
 
 FORUM_SET = SettingSet('form', _('Form settings'), _("General settings for the OSQA forms."), 10)
@@ -14,6 +14,21 @@ label = _("Limit tag creation"),
 help_text = _("Limit tag creation to super users, staff or users with a minimum reputation."),
 required=False))
 
+ENFORCE_TAG_FORMAT_FLAG = Setting('ENFORCE_TAG_FORMAT_FLAG', False, FORUM_SET, dict(
+label = _("Enforce tag format"),
+help_text = _("Should question's tags be checked against a regular expression"),
+required=False))
+
+ENFORCE_TAG_FORMAT_RX = Setting('ENFORCE_TAG_FORMAT_RX', '', FORUM_SET, dict(
+label = _("Enforce tag format RX"),
+help_text = _("Regular eXpression which must match at least one tag on the question"),
+required=False))
+
+ENFORCE_TAG_FORMAT_ERROR_MESSAGE = Setting('ENFORCE_TAG_FORMAT_ERROR_MESSAGE', '', FORUM_SET, dict(
+label = _("Enforce tag format error message"),
+help_text = _("Error message to show if the tags from a question fail to meet the above regular expression (can contain HTML)"),
+widget=Textarea(attrs={'rows': '10'}),
+required=False))
 
 """ settings for questions """
 FORM_MIN_QUESTION_TITLE = Setting('FORM_MIN_QUESTION_TITLE', 10, FORUM_SET, dict(
