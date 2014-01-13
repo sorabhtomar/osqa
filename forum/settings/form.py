@@ -61,7 +61,10 @@ label = _("Maximum length of a tag"),
 help_text = _("How long a tag can be."),
 ))
 
-
+FORM_STAFF_ONLY_TAGS = Setting('FORM_STAFF_ONLY_TAGS', '', FORUM_SET, dict(
+label=_("Staff-only tags"),
+help_text=_("List of tags which can only be added/removed by staff"),
+required=False))
 
 
 """ settings for comments """
