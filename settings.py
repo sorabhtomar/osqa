@@ -21,7 +21,6 @@ MIDDLEWARE_CLASSES = [
     'forum.middleware.cancel.CancelActionMiddleware',
     'forum.middleware.admin_messages.AdminMessagesMiddleware',
     'forum.middleware.custom_pages.CustomPagesFallbackMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'forum.middleware.django_cookies.CookiePostHandlerMiddleware',
 ]
 
