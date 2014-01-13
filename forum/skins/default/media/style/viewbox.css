@@ -41,9 +41,11 @@
 	border-radius:10px;
 	box-shadow: 4px 4px 7px #000;
 } 
-.vb_wrap .content {
+.vb_wrap .section_vb {
  	position:relative;
 	overflow:visible;
+	font-size:11px;
+	color:#004000;
 }
 .vb_wrap .number {
 	position:absolute;
@@ -87,6 +89,13 @@
 	text-indent:-777em;
 	outline:none;
 }
+.vb_wrap .preloader {
+	position:absolute;
+	background:url(../images/viewbox/load.gif) center no-repeat;
+	height:100%;
+	width:100%;
+	z-index:2255;
+}
 .vb_wrap h1 {
 	margin:5px 0px 8px;
 	padding-bottom:3px;
@@ -122,7 +131,7 @@
 .vb_wrap .text h1 {
 	margin:2px; 
 	padding:1px;
-	color:#919191;
+	color:#acacac;
 	z-index:2230;
 }
 .vb_wrap .text .description {
@@ -131,7 +140,7 @@
 	left:0px;
 	padding:2px 2px;
 	font-family:Arial, Helvetica, sans-serif;
-	font-size:0.8em;
+	font-size:0.9em;
 	z-index:2260;
-	color:#949494; 
+	color:#c1c1c1; 
 }
