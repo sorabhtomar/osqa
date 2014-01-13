@@ -149,7 +149,7 @@ class AcceptAnswerAction(ActionProxy):
         question = answer.parent
 
         if self.user == question.author:
-            asker = (self.user == viewer) and _("your") or _("his")
+            asker = (self.user == viewer) and _("your") or _("their")
         else:
             asker = self.hyperlink(question.author.get_profile_url(), question.author.username)
 
