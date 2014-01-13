@@ -92,9 +92,21 @@ class TagNamesField(forms.CharField):
         data = value.strip().lower()
 
         split_re = re.compile(r'[ ,]+')
-        list = {}
-        for tag in split_re.split(data):
-            list[tag] = tag
+        list = dict([(tag, tag) for tag in split_re.split(data)])
+
+        if self.user and settings.FORM_STAFF_ONLY_TAGS:
+            staff_only_tags = split_re.split(settings.FORM_STAFF_ONLY_TAGS.value)
+            is_staff = self.user.is_staff or self.user.is_superuser
+            if not is_staff:
+                previous_tags = split_re.split(self.initial)
+                for t in [t for t in previous_tags if t in staff_only_tags]:
+                    if t in list:
+                        continue
+                    raise forms.ValidationError(_("Can't remove staff-only tag '%(tag)s'") % {'tag': t})
+                for t in [t for t in list.itervalues() if t in staff_only_tags]:
+                    if t in previous_tags:
+                        continue
+                    raise forms.ValidationError(_("Can't add staff-only tag '%(tag)s'") % {'tag': t})
 
         if len(list) > settings.FORM_MAX_NUMBER_OF_TAGS or len(list) < settings.FORM_MIN_NUMBER_OF_TAGS:
             raise forms.ValidationError(_('please use between %(min)s and %(max)s tags') % { 'min': settings.FORM_MIN_NUMBER_OF_TAGS, 'max': settings.FORM_MAX_NUMBER_OF_TAGS})
