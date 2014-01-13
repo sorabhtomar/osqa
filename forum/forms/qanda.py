@@ -94,6 +94,20 @@ class TagNamesField(forms.CharField):
         split_re = re.compile(r'[ ,]+')
         list = dict([(tag, tag) for tag in split_re.split(data)])
 
+        if self.user and settings.FORM_STAFF_ONLY_TAGS:
+            staff_only_tags = split_re.split(settings.FORM_STAFF_ONLY_TAGS.value)
+            is_staff = self.user.is_staff or self.user.is_superuser
+            if not is_staff:
+                previous_tags = split_re.split(self.initial)
+                for t in [t for t in previous_tags if t in staff_only_tags]:
+                    if t in list:
+                        continue
+                    raise forms.ValidationError(_("Can't remove staff-only tag '%(tag)s'") % {'tag': t})
+                for t in [t for t in list.itervalues() if t in staff_only_tags]:
+                    if t in previous_tags:
+                        continue
+                    raise forms.ValidationError(_("Can't add staff-only tag '%(tag)s'") % {'tag': t})
+
         if settings.ENFORCE_TAG_FORMAT_FLAG and settings.ENFORCE_TAG_FORMAT_RX and len(str(settings.ENFORCE_TAG_FORMAT_RX.strip())) > 0:
             try:
                 regexp = re.compile(str(settings.ENFORCE_TAG_FORMAT_RX.strip()))

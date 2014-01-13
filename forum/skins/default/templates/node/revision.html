@@ -1,10 +1,11 @@
+{% load extra_filters %}
 {% spaceless %}
     {% if title %}<h1>{{ title }}</h1>{% endif %}
     <div class="text">{{ html }}</div>
     {% if tags %}
         <div class="tags">
             {% for tag in tags %}
-            <a class="post-tag tag-link-{{ tag }}">{{ tag }}</a>
+            <a class="post-tag tag-link-{{ tag }}{{ tag|mark_if_stafftag }}">{{ tag }}</a>
             {% endfor %}
         </div>
     {% endif %}

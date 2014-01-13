@@ -1,7 +1,9 @@
+import re
 from django import template
 from django.utils.safestring import mark_safe
 import logging
 import markdown
+from forum import settings
 
 register = template.Library()
 
@@ -61,3 +63,13 @@ def static_content(content, render_mode):
         return mark_safe(unicode(content))
     else:
         return unicode(content)
+
+@register.filter
+def mark_if_stafftag(tag):
+    if not settings.FORM_STAFF_ONLY_TAGS:
+        return ''
+    split_re = re.compile(r'[ ,]+')
+    if tag in split_re.split(settings.FORM_STAFF_ONLY_TAGS.value):
+        return ' staff-tag'
+    else:
+        return ''

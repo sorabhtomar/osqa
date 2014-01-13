@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load extra_tags %}
 {% load humanize %}
+{% load extra_filters %}
 {% block title %}{% spaceless %}{% trans "Tag list" %}{% endspaceless %}{% endblock %}
 {% block forejs %}
        <script type="text/javascript">
@@ -42,7 +43,7 @@
 <ul class="tagsList tags">
 {% for tag in tags.paginator.page %}
    <li>
-    <a class="tag-link-{{ tag }}" href="{% url "tag_questions" tag|urlencode %}" title="{% trans "see questions tagged" %}'{{ tag }}'{% trans "using tags" %}" rel="tag">
+    <a class="tag-link-{{ tag }}{{ tag|mark_if_stafftag }}" href="{% url "tag_questions" tag|urlencode %}" title="{% trans "see questions tagged" %}'{{ tag }}'{% trans "using tags" %}" rel="tag">
         {{ tag }}
     </a>&nbsp;
     <span class="tag-number">&#215; {{ tag.used_count|intcomma }}</span>

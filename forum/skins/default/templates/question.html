@@ -115,7 +115,7 @@
                             </div>
                             <div id="question-tags" class="tags-container tags">
                                 {% for tag in question.tagname_list %}
-                                    <a href="{% url "tag_questions" tag|urlencode %}" class="post-tag tag-link-{{ tag }}"
+                                    <a href="{% url "tag_questions" tag|urlencode %}" class="post-tag tag-link-{{ tag }}{{ tag|mark_if_stafftag }}"
                                         title="{% blocktrans with tag as tagname %}see questions tagged '{{ tagname }}'{% endblocktrans %}" rel="tag">{{ tag }}</a>
                                 {% endfor %}
                             </div>
@@ -294,7 +294,11 @@
     <p class="tags" >
         {% for tag in question.tags.all %}
         <a href="{% url "tag_questions" tag.name|urlencode %}"
+<<<<<<< HEAD
             class="tag-link-{{ tag.name }}"
+=======
+            class="tag-link-{{ tag.name }}{{ tag.name|mark_if_stafftag }}"
+>>>>>>> staff_only_tags
             title="{% trans "see questions tagged"%}'{{tag.name}}'{% trans "using tags" %}"
             rel="tag">{{ tag.name }}</a> <span class="tag-number">&#215;{{ tag.used_count|intcomma }}</span><br/>
         {% endfor %}
@@ -329,3 +333,7 @@
 {% block endjs %}
 {% endblock %}
 <!-- end question.html -->
+<<<<<<< HEAD
+=======
+
+>>>>>>> staff_only_tags
