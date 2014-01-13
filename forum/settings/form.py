@@ -83,5 +83,8 @@ label = _("Show author gravatar in comments"),
 help_text = _("Show the gravatar image of a comment author."),
 required=False))
 
+FORM_SHOW_COMMENT_COUNT = Setting('FORM_SHOW_COMMENT_COUNT', 5, FORUM_SET, dict(
+label = _("Number of comments to show"),
+help_text = _("The number of comments to show when the page loads / before the user needs to click a link see more.")))
 
 

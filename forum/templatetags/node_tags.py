@@ -192,14 +192,16 @@ def post_controls(post, user):
 
     return {'controls': controls, 'menu': menu, 'post': post, 'user': user}
 
-def _comments(post, user):
+@register.inclusion_tag('node/comments.html')
+def comments(post, user):
     all_comments = post.comments.filter_state(deleted=False)\
                                 .order_by('-added_at' if settings.SHOW_LATEST_COMMENTS_FIRST else 'added_at')
 
-    if len(all_comments) <= 5:
+    comments_to_show = settings.FORM_SHOW_COMMENT_COUNT
+    if len(all_comments) <= comments_to_show:
         top_scorers = all_comments
     else:
-        top_scorers = sorted(all_comments, lambda c1, c2: cmp(c2.score, c1.score))[0:5]
+        top_scorers = sorted(all_comments, lambda c1, c2: cmp(c2.score, c1.score))[0:comments_to_show]
 
     comments = []
     showing = 0
@@ -249,9 +251,6 @@ def _comments(post, user):
         'user': user,
     }
 
-@register.inclusion_tag('node/comments.html')
-def comments(post, user):
-    return _comments(post, user)
 
 @register.inclusion_tag("node/contributors_info.html", takes_context=True)
 def contributors_info(context, node, verb=None):
@@ -265,3 +264,4 @@ def contributors_info(context, node, verb=None):
 @register.inclusion_tag("node/reviser_info.html")
 def reviser_info(revision):
     return {'revision': revision}
+
