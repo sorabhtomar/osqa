@@ -67,6 +67,9 @@ class StringMorsel(Morsel):
             return a.output() != self.output()
         return True
 
+    def __radd__(self, other):
+        return other + self.value
+
     def __repr__(self):
         return smart_unicode(self)
 
