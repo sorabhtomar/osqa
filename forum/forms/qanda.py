@@ -255,7 +255,7 @@ class EditQuestionForm(forms.Form):
         self.fields['text'].initial = revision.body
 
         self.fields['tags'] = TagNamesField(user)
-        self.fields['tags'].initial = revision.tagnames
+        self.fields['tags'].initial = question.tagnames
 
         if not user.is_authenticated() or (int(user.reputation) < settings.CAPTCHA_IF_REP_LESS_THAN and not (user.is_superuser or user.is_staff)):
             spam_fields = call_all_handlers('create_anti_spam_field')

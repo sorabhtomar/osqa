@@ -63,6 +63,13 @@ help_text = _("How long a tag can be."),
 
 
 
+FORM_ANSWERED_BY_SUPERUSER_TAG = Setting('FORM_ANSWERED_BY_SUPERUSER_TAG', '', FORUM_SET, dict(
+label=_("Tag for answered by superuser"),
+help_text=_("Set this tag on questions automatically whenever a superuser answers them"),
+required=False))
+
+
+
 
 """ settings for comments """
 FORM_MIN_COMMENT_BODY = Setting('FORM_MIN_COMMENT_BODY', 10, FORUM_SET, dict(

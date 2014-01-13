@@ -1,6 +1,6 @@
 # encoding:utf-8
 import os.path
-
+import logging
 import datetime
 
 from django.core.urlresolvers import reverse
@@ -133,12 +133,36 @@ def edit_question(request, id):
     question = get_object_or_404(Question, id=id)
     if question.nis.deleted and not request.user.can_view_deleted_post(question):
         raise Http404
-    if request.user.can_edit_post(question):
+
+    edit_post = request.user.can_edit_post(question)
+    retag_post = request.user.can_retag_questions(question)
+    if request.method == 'POST':
+        revision_form, edit_form, _ = _get_edit_question_forms_from_postdata(request, question)
+        if (retag_post and revision_form and not revision_form.has_changed()
+                and edit_form.is_valid() and edit_form.has_changed()
+                and all(fieldname in ['tags', 'summary'] for fieldname in edit_form.changed_data)):
+            # if only the tags have changed, consider it a retag rather than an edit
+            edit_post = False
+
+    if edit_post:
         return _edit_question(request, question)
-    elif request.user.can_retag_questions():
+    elif retag_post:
         return _retag_question(request, question)
     else:
         raise Http404
+
+def _get_edit_question_forms_from_postdata(request, question):
+    revision_form = RevisionForm(question, data=request.POST)
+    if not revision_form.is_valid():
+        logging.error("Passed in data is not valid: %s", revision_form.errors)
+        return (None, None, None)
+    revision = question.revisions.get(revision=revision_form.cleaned_data['revision'])
+
+    if 'select_revision' in request.POST:
+        form = EditQuestionForm(question, request.user, revision)
+    else:
+        form = EditQuestionForm(question, request.user, revision, data=request.POST)
+    return (revision_form, form, revision)
 
 def _retag_question(request, question):
     if request.method == 'POST':
@@ -159,14 +183,7 @@ def _retag_question(request, question):
 def _edit_question(request, question, template='question_edit.html', summary='', action_class=ReviseAction,
                    allow_rollback=True, url_getter=lambda q: q.get_absolute_url(), additional_context=None):
     if request.method == 'POST':
-        revision_form = RevisionForm(question, data=request.POST)
-        revision_form.is_valid()
-        revision = question.revisions.get(revision=revision_form.cleaned_data['revision'])
-
-        if 'select_revision' in request.POST:
-            form = EditQuestionForm(question, request.user, revision)
-        else:
-            form = EditQuestionForm(question, request.user, revision, data=request.POST)
+        revision_form, form, revision = _get_edit_question_forms_from_postdata(request, question)
 
         if not 'select_revision' in request.POST and form.is_valid():
             if form.has_changed():
