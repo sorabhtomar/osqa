@@ -1,8 +1,9 @@
+import logging
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 from forum.models.action import ActionProxy
 from forum.models import Comment, Question, Answer, NodeRevision
-import logging
+from forum import settings
 
 from django.contrib import messages
 
@@ -44,6 +45,13 @@ class AnswerAction(NodeEditAction):
     def process_data(self, **data):
         answer = Answer(author=self.user, parent=data['question'], **self.create_revision_data(True, **data))
         answer.save()
+        if settings.FORM_ANSWERED_BY_SUPERUSER_TAG and self.user.is_superuser:
+            answer_tag = settings.FORM_ANSWERED_BY_SUPERUSER_TAG.strip()
+            if answer_tag not in answer.parent.tagname_list():
+                answer.parent.active_revision.tagnames += ' ' + answer_tag
+                answer.parent.active_revision.save()
+                answer.parent.tagnames += ' ' + answer_tag
+                answer.parent.save()
         self.node = answer
 
     def process_action(self):
