@@ -35,7 +35,7 @@
                 {% endif %}
 
                 <span class="comment-age">({% diff_date comment.added_at %})</span>
-                <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user.decorated_name}}</a>
+                <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user.decorated_name_wout_diamonds}}</a>
                 {% if show_gravatar %}{% gravatar comment.user 18 %}{% endif %}
             </div>
         </div>

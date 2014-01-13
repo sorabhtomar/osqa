@@ -16,6 +16,11 @@ label = _("Store greeting in cookie"),
 help_text = _("If you check this the greeting will be stored in a cookie and the users won't be notified on logout."),
 required=False))
 
+SHOW_REAL_NAME = Setting('SHOW_REAL_NAME', False, USERS_SET, dict(
+label = _("Show real name"),
+help_text = _("Show the user's real name instead of their screen name."),
+required=False))
+
 EDITABLE_SCREEN_NAME = Setting('EDITABLE_SCREEN_NAME', False, USERS_SET, dict(
 label = _("Editable screen name"),
 help_text = _("Allow users to alter their screen name."),

@@ -31,7 +31,7 @@ ui.register(ui.HEADER_LINKS,
 
             ui.Link(
                     visibility=ui.Visibility.AUTHENTICATED,
-                    text=lambda u, c: smart_unicode(u.username),
+                    text=lambda u, c: smart_unicode(u.decorated_name),
                     url=lambda u, c: u.get_profile_url(),
                     post_code=lambda u, c: get_score_badge(u),
                     weight=100, name='ACCOUNT'),
