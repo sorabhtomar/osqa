@@ -165,25 +165,35 @@ class User(BaseModel, DjangoUser):
         #todo: temporary thing, for now lets just assume that the site owner will always be the first user of the application
         return self.id == 1
 
-
-    def _decorated_name(self):
-        username = smart_unicode(self.username)
+    def get_decorated_name(self, enable_diamond_hiding=False):
+        if settings.SHOW_REAL_NAME and not self.real_name == "":
+            username = smart_unicode(self.real_name)
+        else:
+            username = smart_unicode(self.username)
 
         if len(username) > TRUNCATE_USERNAMES_LONGER_THAN and TRUNCATE_LONG_USERNAMES:
             username = '%s...' % username[:TRUNCATE_USERNAMES_LONGER_THAN-3]
 
-        if settings.SHOW_STATUS_DIAMONDS:
-            if self.is_superuser:
+        if (settings.SHOW_STATUS_DIAMONDS and (self.is_superuser or self.is_staff)):
+            hide_diamonds = (enable_diamond_hiding
+              and self.prop.preferences
+              and self.prop.preferences.get('hide_diamonds', False))
+
+            if self.is_superuser and not(hide_diamonds):
                 return u"%s \u2666\u2666" % username
 
-            if self.is_staff:
+            if self.is_staff and not(hide_diamonds):
                 return u"%s \u2666" % username
 
         return username
 
     @property
     def decorated_name(self):
-        return self._decorated_name()
+        return self.get_decorated_name()
+
+    @property
+    def decorated_name_wout_diamonds(self):
+        return self.get_decorated_name(enable_diamond_hiding=True)
 
     @property
     def last_activity(self):

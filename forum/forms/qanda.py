@@ -357,6 +357,4 @@ class SubscriptionSettingsForm(forms.ModelForm):
 
 class UserPreferencesForm(forms.Form):
     sticky_sorts = forms.BooleanField(required=False, initial=False)
-
-
-
+    hide_diamonds = forms.BooleanField(required=False, initial=False)
