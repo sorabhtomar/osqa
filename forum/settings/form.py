@@ -88,7 +88,6 @@ required=False))
 
 
 
-
 """ settings for comments """
 FORM_MIN_COMMENT_BODY = Setting('FORM_MIN_COMMENT_BODY', 10, FORUM_SET, dict(
 label = _("Minimum number of characters for a comment"),

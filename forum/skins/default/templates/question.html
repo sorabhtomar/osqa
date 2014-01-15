@@ -294,11 +294,7 @@
     <p class="tags" >
         {% for tag in question.tags.all %}
         <a href="{% url "tag_questions" tag.name|urlencode %}"
-<<<<<<< HEAD
-            class="tag-link-{{ tag.name }}"
-=======
             class="tag-link-{{ tag.name }}{{ tag.name|mark_if_stafftag }}"
->>>>>>> staff_only_tags
             title="{% trans "see questions tagged"%}'{{tag.name}}'{% trans "using tags" %}"
             rel="tag">{{ tag.name }}</a> <span class="tag-number">&#215;{{ tag.used_count|intcomma }}</span><br/>
         {% endfor %}
@@ -333,7 +329,4 @@
 {% block endjs %}
 {% endblock %}
 <!-- end question.html -->
-<<<<<<< HEAD
-=======
 
->>>>>>> staff_only_tags

@@ -43,6 +43,7 @@
 <ul class="tagsList tags">
 {% for tag in tags.paginator.page %}
    <li>
+    <a class="tag-link-{{ tag }}" href="{% url tag_questions tag|urlencode %}" title="{% trans "see questions tagged" %}'{{ tag }}'{% trans "using tags" %}" rel="tag">
     <a class="tag-link-{{ tag }}{{ tag|mark_if_stafftag }}" href="{% url "tag_questions" tag|urlencode %}" title="{% trans "see questions tagged" %}'{{ tag }}'{% trans "using tags" %}" rel="tag">
         {{ tag }}
     </a>&nbsp;
