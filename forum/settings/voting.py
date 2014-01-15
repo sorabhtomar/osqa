@@ -3,6 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 
 VOTE_RULES_SET = SettingSet('voting', _('Voting rules'), _("Configure the voting rules on your site."), 400)
 
+ANONYMOUS_VOTES = Setting('ANONYMOUS_VOTES', False, VOTE_RULES_SET, dict(
+label = _("User votes anonymous"), required=False,
+help_text = _("If set to True user's votes are only visible to themselves and administrators.")))
+
 USER_REPUTATION_TO_MAX_VOTES = Setting('USER_REPUTATION_TO_MAX_VOTES', True, VOTE_RULES_SET, dict(
 label = _("Add reputation to max votes per day"), required=False,
 help_text = _("The user reputation is added to the static MAX_VOTES_PER_DAY option. Users with higher reputation can vote more.")))
