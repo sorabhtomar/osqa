@@ -59,6 +59,8 @@ def contained_in(item, container):
 def static_content(content, render_mode):
     if render_mode == 'markdown':
         return mark_safe(markdown.markdown(unicode(content), ["settingsparser"]))
+    elif render_mode == 'markdown-safe':
+        return mark_safe(markdown.markdown(unicode(content), safe_mode=True))
     elif render_mode == "html":
         return mark_safe(unicode(content))
     else:
@@ -73,3 +75,4 @@ def mark_if_stafftag(tag):
         return ' staff-tag'
     else:
         return ''
+

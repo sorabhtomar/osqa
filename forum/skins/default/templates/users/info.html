@@ -122,7 +122,7 @@
             {% if not view_user.is_suspended %}
             <div class="user-about">
             {% if view_user.about %}
-                {{view_user.about|markdown}}
+                {{view_user.about|static_content:"markdown-safe"}}
             {% endif %}
             </div>
             {% endif %}
