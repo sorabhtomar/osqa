@@ -104,3 +104,16 @@ CUSTOM_HEAD = Setting('CUSTOM_HEAD', '', HEAD_SET, dict(
         help_text = _("Your custom Head elements."),
         widget=Textarea(attrs={'rows': '25'}),
         required=False))
+
+LATEX_SUPPORT_CHOICES = (
+('disabled', _('None')),
+('mathjax', _('Using MathJax')),
+('mathquill', _('Using MathQuill')),
+)
+
+LATEX_SUPPORT = Setting('LATEX_SUPPORT', 'disabled', HEAD_SET, dict(
+        label = _("LaTeX support"),
+        help_text = _("Enable LaTeX support for markdown"),
+        widget=RadioSelect,
+        choices=LATEX_SUPPORT_CHOICES,
+        ))

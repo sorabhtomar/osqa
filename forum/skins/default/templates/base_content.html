@@ -65,6 +65,25 @@
             });
         </script>
         {% endif %}
+        {% ifequal settings.LATEX_SUPPORT|or_preview:request "mathjax" %}
+            <script type="text/x-mathjax-config">
+               MathJax.Hub.Config({
+                 "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+                 tex2jax: { inlineMath: [ ["$%","$%"] ],
+                            displayMath: [ ["$$","$$"] ],
+                            processEscapes: true,
+                            ignoreClass: "tex2jax_ignore|dno"
+                 },
+                 TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+                 messageStyle: "none"
+               });
+            </script>
+            <script type="text/javascript" src="{% media "/media/mathjax/MathJax.js" %}?config=TeX-AMS-MML_HTMLorMML"></script>
+        {% endifequal %}
+        {% ifequal settings.LATEX_SUPPORT|or_preview:request "mathquill" %}
+            <link rel="stylesheet" type="text/css" href="{% media "/media/mathquill/mathquill.css" %}">
+            <script type="text/javascript" src="{% media "/media/mathquill/mathquill.min.js" %}"></script>
+        {% endifequal %}
         {% if settings.USE_CUSTOM_HEAD|or_preview:request %}
             {{ settings.CUSTOM_HEAD|or_preview:request|safe }}
         {% endif %}
