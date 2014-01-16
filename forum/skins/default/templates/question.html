@@ -111,7 +111,11 @@
                     <td>
                         <div id="item-right">
                             <div class="question-body">
-                                {{ question.html|safe }}
+                                {% ifequal settings.LATEX_SUPPORT|or_preview:request "mathquill" %}
+                                    {{ question.html|mathquillify|safe }}
+                                {% else %}
+                                    {{ question.html|safe }}
+                                {% endifequal %}
                             </div>
                             <div id="question-tags" class="tags-container tags">
                                 {% for tag in question.tagname_list %}

@@ -61,3 +61,12 @@ def static_content(content, render_mode):
         return mark_safe(unicode(content))
     else:
         return unicode(content)
+
+_re_latex_expression = re.compile(r'(\$[$%])(.*?)\1', flags=re.DOTALL)
+
+@register.filter
+def mathquillify(html):
+    return _re_latex_expression.sub(
+        lambda match: '<span class="mathquill-embedded-latex">%s</span>' % match.group(2),
+        html)
+
