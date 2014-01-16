@@ -24,9 +24,10 @@ def _list_dirs(include_common=False):
             break
         result.append(p)
 
-    result.append(_os.safe_join(SKINS_FOLDER, DEFAULT_SKIN_NAME))
+    if settings.OSQA_DEFAULT_SKIN != DEFAULT_SKIN_NAME:
+        result.append(_os.safe_join(SKINS_FOLDER, DEFAULT_SKIN_NAME))
     if include_common:
-        result.append(_os.safe_join(SKINS_FOLDER, 'commmon'))
+        result.append(_os.safe_join(SKINS_FOLDER, 'common'))
     return result
 
 
