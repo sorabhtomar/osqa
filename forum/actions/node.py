@@ -3,7 +3,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 from forum.models.action import ActionProxy
 from forum.models import Comment, Question, Answer, NodeRevision
-from forum import settings
+from forum import settings, REQUEST_HOLDER
 
 from django.contrib import messages
 
@@ -31,7 +31,7 @@ class AskAction(NodeEditAction):
         question.save()
         self.node = question
 
-        messages.info(request, self.describe(self.user))
+        messages.info(REQUEST_HOLDER.request, self.describe(self.user))
 
     def describe(self, viewer=None):
         return _("%(user)s asked %(question)s") % {
@@ -57,7 +57,7 @@ class AnswerAction(NodeEditAction):
     def process_action(self):
         self.node.question.reset_answer_count_cache()
 
-        messages.info(request, self.describe(self.user))
+        messages.info(REQUEST_HOLDER.request, self.describe(self.user))
 
 
     def describe(self, viewer=None):

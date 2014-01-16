@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import F
 from forum.models.action import ActionProxy
 from forum.models import Award, Badge, ValidationHash, User
-from forum import settings
+from forum import settings, REQUEST_HOLDER
 from forum.settings import APP_SHORT_NAME
 from forum.utils.mail import send_template_email
 
@@ -80,7 +80,7 @@ class BonusRepAction(ActionProxy):
                     message=_("Congratulations, you have been awarded an extra %s reputation points.") % self._value +
                     '<br />%s' % self.extra.get('message', _('Thank you')))
         else:
-            messages.info(request, _("You have penalized %s in %s reputation points.") % (self._affected, self._value) +
+            messages.info(REQUEST_HOLDER.request, _("You have penalized %s in %s reputation points.") % (self._affected, self._value) +
                     '<br />%s' % self.extra.get('message', ''))
 
     def describe(self, viewer=None):
