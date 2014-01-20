@@ -4,7 +4,7 @@ python-openid
 South
 python-memcached
 django==1.3.7
-django-debug-toolbar
+django-debug-toolbar==0.9.4
 django-endless-pagination
 pytz
 
