@@ -72,7 +72,6 @@ TIME_ZONE = 'America/New_York'
 USE_I18N = True
 LANGUAGE_CODE = 'en'
 
-DJANGO_VERSION = 1.1
 OSQA_DEFAULT_SKIN = 'default'
 
 DISABLED_MODULES = ['books', 'recaptcha', 'project_badges']
