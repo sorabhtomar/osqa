@@ -389,7 +389,7 @@ def question(request, id, slug='', answer=None):
 
     return pagination.paginated(request, ('answers', AnswerPaginatorContext()), {
     "question" : question,
-    "answer" : answer_form,
+    "form" : answer_form,
     "answers" : answers,
     "similar_questions" : question.get_related_questions(),
     "subscription": subscription,

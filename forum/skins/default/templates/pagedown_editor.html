@@ -1,0 +1,61 @@
+{% load i18n extra_filters %}
+<div class="wmd-panel {% if form.text.errors %} error{% endif %}">
+    <div id="wmd-button-bar"></div>
+    {{ form.text }} {{ form.text.errors }}
+</div>
+<div id="wmd-preview" class="wmd-panel wmd-preview" style="display: none;"></div>
+<span class="form-error"></span>
+<div class="preview-toggle" style="display: none;">
+    <span id="pre-collapse" title="{% trans " Toggle the real time Markdown editorpreview" %}">{% trans "toggle preview" %}</span>
+    <span style="text-align: right; margin-left: 200px;" id="editor-metrics"></span>
+    {% if settings.WIKI_ON %}
+    <div style="float: right;">
+        {{ form.wiki }}
+        <span style="color: #000; cursor: help" title="{{form.wiki.help_text}}">{{ form.wiki.label_tag }} </span>
+    </div>
+    {% endif %}
+</div>
+
+<script type="text/javascript">
+(function () {
+    var first_focus = 1;
+    $('.wmd-panel textarea').focusin(function() {
+        if (!first_focus) { return; }
+        first_focus = 0;
+        $('#wmd-preview').show();
+        $('div.preview-toggle').show();
+    });
+
+    var converter = Markdown.getSanitizingConverter();
+    converter.hooks.chain("preConversion", function (text) {
+        var lines = text.split(/\r?\n|\r/);
+        var processed_lines = new Array(lines.length);
+        var trim_rx = /\s\s*$/;
+        for (var i = 0; i < lines.length; ++i) {
+            line = lines[i].replace(trim_rx, '');
+            processed_lines[i] = '' === line ? '' : line + '  ';
+        }
+        return processed_lines.join("\n");
+    });
+    var editor = new Markdown.Editor(converter);
+{% ifequal settings.LATEX_SUPPORT|or_preview:request "mathjax" %}
+    editor.hooks.chain("onPreviewRefresh", function () {
+        if (typeof MathJax !== 'undefined') {
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        }
+    });
+{% endifequal %}
+{% ifequal settings.LATEX_SUPPORT|or_preview:request "mathquill" %}
+    editor.hooks.chain("onPreviewRefresh", function () {
+        $('#wmd-preview p').each(function(i, e) {
+            e = $(e);
+            var html = e.html();
+            html = html.replace(/(\$[$%])(.*?)\1/g, '<span class="mathquill-embedded-latex">$2</span>');
+            e.html(html);
+        });
+        $('#wmd-preview .mathquill-embedded-latex').mathquill();
+    });
+{% endifequal %}
+    editor.run();
+})();
+</script>
