@@ -865,7 +865,7 @@ h4 {display:block;font-size:90%; font-family:Verdana;color:#ccc;}
     margin-bottom:10px;
 }
 
-#editor{
+#wmd-input{
     font-size:100%;
     min-height:200px;
     line-height: 18px;

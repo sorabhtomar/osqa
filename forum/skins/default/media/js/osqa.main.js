@@ -661,8 +661,8 @@ $(function() {
         });
     });
 
-    if ($('#editor').length) {
-        var $editor = $('#editor');
+    if ($('#wmd-input').length) {
+        var $editor = $('#wmd-input');
         var $previewer = $('#previewer');
         var $container = $('#editor-metrics');
 

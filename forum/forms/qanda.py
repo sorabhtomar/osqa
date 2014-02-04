@@ -37,8 +37,8 @@ class EditorField(forms.CharField):
     def __init__(self, *args, **kwargs):
         super(EditorField, self).__init__(*args, **kwargs)
 
-        self.widget = forms.Textarea(attrs={'id':'editor'})
-        self.label  = _('content')
+        self.widget = forms.Textarea(attrs={'id':'wmd-input'})
+        self.label = _('content')
         self.help_text = u''
         self.initial = ''
 

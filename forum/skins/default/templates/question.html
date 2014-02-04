@@ -19,10 +19,7 @@
         {% if not question.nis.closed %}
         <script type='text/javascript' src='{% media  "/media/js/osqa.question.js" %}'></script>
         <script type='text/javascript' src='{% media  "/media/js/jquery.caret.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/wmd/showdown.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/wmd/wmd.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/html_sanitizer.js" %}'></script>
-        <link rel="stylesheet" type="text/css" href="{% media  "/media/js/wmd/wmd.css" %}" />
+        {% include "pagedown_js.html" %}
 
         {% if embed_youtube_videos %}
         <script type='text/javascript' src='{% media  "/media/js/viewbox.js" %}'></script>
@@ -40,7 +37,7 @@
                 $("#" + answer_sort_tab).attr('className',"on");
             }
 
-            $('#editor').TextAreaResizer();
+            $('#wmd-input).TextAreaResizer();
 
             //toggle preview of editor
             var display = true;
@@ -66,7 +63,7 @@
 
         function beforeUnload(e) {
 
-            if($("textarea#editor")[0].value != "") {
+            if($("textarea#wmd-input")[0].value != "") {
                 return yourWorkWillBeLost(e);
             }
 
@@ -226,33 +223,7 @@
                 {% endcomment %}
 
                 <div id="description" class="" >
-                    <div id="wmd-button-bar" class="wmd-panel"></div>
-                    {{ answer.text }}
-                    <div class="preview-toggle">
-                        <table width="100%">
-                            <tr>
-                                <td>
-                                    <span id="pre-collapse" 
-                                        title="{% trans "Toggle the real time Markdown editor preview" %}">
-                                            {% trans "toggle preview" %}
-                                    </span>
-                                </td>
-                                <td style="text-align: right;" id="editor-metrics"></td>
-                                {% if settings.WIKI_ON %}
-                                <td style="text-align:right;">
-                                    {{ answer.wiki }} 
-                                    <span style="font-weight:normal;cursor:help" 
-                                        title="{{answer.wiki.help_text}}">
-                                            {{ answer.wiki.label_tag }} 
-                                    </span>
-                                </td>
-                                {% endif %}
-                            </tr>
-
-                        </table>
-                    </div>
-                    {{ answer.text.errors }}
-                    <div id="previewer" class="wmd-preview"></div>
+                    {% include "pagedown_editor.html" %}
                 </div>
 
                 {% if answer.recaptcha %}

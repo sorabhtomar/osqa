@@ -4,15 +4,13 @@
 {% load extra_tags %}
 {% block title %}{% spaceless %}{% trans "Edit question" %}{% endspaceless %}{% endblock %}
 {% block forejs %}
-        <script type='text/javascript' src='{% media  "/media/js/wmd/showdown.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/wmd/wmd.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/html_sanitizer.js" %}'></script>
-        <link rel="stylesheet" type="text/css" href="{% media  "/media/js/wmd/wmd.css" %}" />
+        {% include "pagedown_js.html" %}
+
         <script type="text/javascript">
 		//todo move javascript out        
         $().ready(function(){
             $("#nav_questions").attr('className',"on");
-            $('#editor').TextAreaResizer();
+            $('#wmd-input').TextAreaResizer();
             
 
             //toggle preview of editor
@@ -55,10 +53,10 @@
                 $("#select_revision").click();
             });
 
-            init = $("textarea#editor")[0].value;
+            init = $("textarea#wmd-input")[0].value;
 
             title = $("input#id_title")[0].value;
-            body = $("textarea#editor")[0].value;
+            body = $("textarea#wmd-input")[0].value;
             tag = $("input#id_tags")[0].value;
         });
 
@@ -74,7 +72,7 @@
         }
 
         function beforeUnload(e) {
-            if($("input#id_title")[0].value != title || $("textarea#editor")[0].value != body || $("input#id_tags")[0].value != tag) {
+            if($("input#id_title")[0].value != title || $("textarea#wmd-input")[0].value != body || $("input#id_tags")[0].value != tag) {
                  return yourWorkWillBeLost(e);
             }
         }
@@ -109,27 +107,9 @@
                 </div>     
             </div>
             <div class="form-item">
-                <div id="wmd-button-bar" class="wmd-panel"></div>
-                {{ form.text }}
-                <span class="form-error"></span>
-                <div class="preview-toggle">
-                    <table width="100%">
-                        <tr>
-                            <td>
-                                <span id="pre-collapse" title="{% trans "Toggle the real time Markdown editor preview" %}">{% trans "toggle preview" %}</span>
-                            </td>
-                            <td style="text-align: right;" id="editor-metrics"></td>
-                            {% if settings.WIKI_ON %}
-                            <td style="text-align:right;">
-                                {{ form.wiki }} <span style="color:#000;cursor:help" title="{{form.wiki.help_text}}">{{ form.wiki.label_tag }} </span>
-                            </td>
-                            {% endif %}
-                        </tr>
-                    
-                    </table>   
-                </div>
-                <div id="previewer" class="wmd-preview"></div>
+                {% include "pagedown_editor.html" %}
             </div>
+
             <div class="form-item">
                 <strong>{{ form.tags.label_tag }}:</strong> <span class="form-error"></span><br/>
                 {{ form.tags }}  {{ form.tags.errors }}
