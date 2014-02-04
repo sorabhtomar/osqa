@@ -103,7 +103,7 @@
                     </div>
                 {% endif %}
             {% endif %}
-            <div class="form-item">
+            <div class="form-item{% if form.title.errors %} error{% endif %}">
                 <label for="id_title" ><strong>{{ form.title.label_tag }}:</strong></label> <span class="form-error"></span><br/>
                 {{ form.title }} {{ form.title.errors }}
                 <div class="title-desc">
@@ -111,7 +111,7 @@
                 </div>
             </div>
             <div id="ask-related-questions"></div>
-            <div class="form-item">
+            <div class="form-item{% if form.text.errors %} error{% endif %}">
                 <div id="wmd-button-bar" class="wmd-panel"></div>
                 {{ form.text }} {{ form.text.errors }}
                 <div class="preview-toggle">
@@ -133,7 +133,7 @@
                 <div id="previewer" class="wmd-preview"></div>
                 <span class="form-error"></span>
             </div>
-            <div class="form-item">
+            <div class="form-item{% if form.tags.errors %} error{% endif %}">
                 <strong>{{ form.tags.label_tag }}:</strong> {% trans "(required)" %} <span class="form-error"></span><br/>
                 {{ form.tags }}  {{ form.tags.errors }}
             </div>
