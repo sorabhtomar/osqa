@@ -7,5 +7,7 @@ Django==1.6.2
 django-debug-toolbar
 django-endless-pagination
 django-pipeline
+django-redis
+psycopg2
 pytz
 
