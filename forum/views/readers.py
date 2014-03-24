@@ -79,6 +79,13 @@ class AnswerPaginatorContext(pagination.PaginatorContext):
             (_('votes'), AnswerSort(_('popular answers'), ('-score', 'added_at'), _("most voted answers will be shown first"))),
         ), default_sort=_('votes'), pagesizes=(5, 10, 20), default_pagesize=default_pagesize, prefix=prefix)
 
+    def sorted(self, objects, request, session_prefs=None):
+        sort, objects = super(AnswerPaginatorContext, self).sorted(objects, request, session_prefs)
+        if sort == self.default_sort and len(objects) > 0 and 'discussion' in objects[0].parent.tagnames:
+            sort = 'active'
+            objects = self.sort_methods[sort].apply(objects)
+        return sort, objects
+
 class TagPaginatorContext(pagination.PaginatorContext):
     def __init__(self):
         super (TagPaginatorContext, self).__init__('TAG_LIST', sort_methods=(
