@@ -6,5 +6,7 @@ python-memcached
 django
 django-debug-toolbar
 django-endless-pagination
+django-redis
+psycopg2
 pytz
 
