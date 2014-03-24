@@ -39,14 +39,12 @@ def static(request, title, content):
     return render_to_response('static.html', {'content' : content, 'title': title},
                               context_instance=RequestContext(request))
 
-
 def markdown_help(request):
     return render_to_response('markdown_help.html', context_instance=RequestContext(request))
 
 @cache_page(60 * 60 * 24 * 30) #30 days
 def opensearch(request):
     return render_to_response('opensearch.html', {'settings' : settings}, context_instance=RequestContext(request))
-
 
 def feedback(request):
     if request.method == "POST":
