@@ -1,6 +1,7 @@
 # encoding:utf-8
 import os.path
 import sys
+from django.utils import _os
 
 SITE_ID = 1
 
@@ -31,11 +32,14 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
 ]
 
+BASEDIR = os.path.dirname(__file__)
+SKINDIR = os.path.join(BASEDIR, 'forum', 'skins')
+
 ROOT_URLCONF = 'urls'
 APPEND_SLASH = True
 
 TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__),'forum','skins').replace('\\','/'),
+    SKINDIR.replace('\\','/'),
 )
 
 
@@ -52,10 +56,38 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 STATIC_URL = '/m/'
-STATICFILES_DIRS = TEMPLATE_DIRS
+STATIC_ROOT = os.path.join(BASEDIR, 'static').replace('\\','/')
 
 # User settings
 from settings_local import *
+
+def _list_possible_dirs(include_common=False):
+    DEFAULT_SKIN_NAME = 'default'
+    result = [_os.safe_join(SKINDIR, OSQA_DEFAULT_SKIN)]
+
+    skin_name = OSQA_DEFAULT_SKIN
+    while True:
+        parent_txt = _os.safe_join(SKINDIR, skin_name, 'parent.txt')
+        if not os.path.isfile(parent_txt):
+            break
+        with open(parent_txt, 'rb') as fp:
+            skin_name = fp.readline().decode(FILE_CHARSET).strip()
+        p = _os.safe_join(SKINDIR, skin_name)
+        if not path.isdir(p):
+            break
+        result.append(p)
+
+    if OSQA_DEFAULT_SKIN != DEFAULT_SKIN_NAME:
+        result.append(_os.safe_join(SKINDIR, DEFAULT_SKIN_NAME))
+    if include_common:
+        result.append(_os.safe_join(SKINDIR, 'common'))
+    return result
+
+STATICFILES_DIRS = [
+    ('templates', os.path.join(skin, 'templates')) for skin in _list_possible_dirs()
+] + [
+    ('public', os.path.join(skin, 'media')) for skin in _list_possible_dirs(include_common=True)
+]
 
 template_loaders = (
     'django.template.loaders.filesystem.Loader',
