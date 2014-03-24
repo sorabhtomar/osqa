@@ -1,6 +1,6 @@
 {% spaceless %}
 {% load i18n %}
-<div class="paginator">
+<div class="paginator" id="paginatorFull">
     <span class="text">{% trans "posts per page" %}</span>
     {% for size, url in sizes %}
         {% ifequal size current %}
@@ -9,5 +9,15 @@
             <span class="page"><a href="{{ url }}">{{ size }}</a></span>
         {% endifequal %}
     {% endfor %}
+</div>
+<div class="paginator" id="paginatorCompact">
+    <form action="{{ pagesize_path }}" method="GET">
+        <select name="{{ pagesize_param }}" onchange="this.form.submit();">
+        {% for size, url in sizes %}
+            <option value="{{ size }}" {% ifequal size current %} selected {% endifequal %}>{{ size }} {% trans "posts per page" %}</a>
+        {% endfor %}
+       </select>
+       <noscript><input type="submit" value="Submit"></noscript>
+    </form>
 </div>
 {% endspaceless %}

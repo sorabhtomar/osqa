@@ -1,0 +1,7 @@
+{% load i18n %}
+
+<div class="tabsA">
+    <a id="active" href="{{ base_url }}active"{% ifequal current "active" %} class="on"{% endifequal %} title="{% trans "most recently updated questions" %}">{% trans "active" %}</a>
+    <a id="latest" href="{{ base_url }}latest"{% ifequal current "latest" %} class="on"{% endifequal %} title="{% trans "most recently asked questions" %}">{% trans "newest" %}</a>
+    <a id="mostvoted" href="{{ base_url }}mostvoted"{% ifequal current "mostvoted" %} class="on"{% endifequal %} title="{% trans "most voted questions" %}">{% trans "most voted" %}</a>
+</div>

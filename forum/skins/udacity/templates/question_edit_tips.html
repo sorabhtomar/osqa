@@ -1,0 +1,34 @@
+<!-- question_edit_tips.html -->
+{% load markup %}
+{% load i18n general_sidebar_tags %}
+<div class="boxC">
+    <h2>Forum Guidelines</h2>
+    <div class="list-item">
+        {{ settings.QUESTION_TITLE_TIPS|markdown:"settingsparser" }}
+
+<h3>Be Descriptive</h3>
+<p class="ui">
+Providing a rich description will increase the likelihood that your
+fellow students and Udacity staff will understand your question and
+provide you with an accurate answer. 
+</p>
+
+<h3>Add Value</h3>
+<p class="ui">
+Making sure your posts haven’t already been addressed, before posting,
+will reduce redundant content in the discussion forum. This will
+ultimately make the discussion forum easier to search and browse. 
+</p>
+
+<h3>Be Respectful</h3>
+<p class="ui">
+Remember that Udacity students bring to the table diverse perspectives
+and experience levels with course content. In order for the discussion
+forum to thrive, it’s important that all are comfortable posting to it.
+For obvious reasons, this won’t happen in the face of disrespect. 
+</p>
+
+    </div>
+</div>
+
+<!-- end question_edit_tips.html  -->

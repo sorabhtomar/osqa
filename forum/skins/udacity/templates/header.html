@@ -1,0 +1,174 @@
+<!-- template header.html -->
+{% load extra_tags ui_registry i18n extra_filters markup %}
+<header class="navbar site-nav navbar-inverse navbar-static-top" role="navigation">
+	<div class="container">
+		<div class="navbar-header">
+				<a class="logo" href="{{login_url_prefix}}/" id="header-logo"><img src="{{login_url_prefix}}/media/img/logos/udacity/udacity-85x15.png" width="85" height="15" alt="Udacity Logo"></a>
+		</div>
+
+		<nav class="" role="navigation">
+			<ul class="nav navbar-nav navbar-right nav-pills">
+					<li><a href="{{login_url_prefix}}/courses#!/All">Course Catalog </a></li>
+			{% if not request.user.is_authenticated %}
+					<!-- Logged out dropdowns -->
+						<li class="dropdown">
+							<a id="sign-in" href="{{login_url_prefix}}/account/auth#!/signin?next={{ settings.APP_URL }}{% url auth_signin %}" >Sign In</a>
+						</li>
+						<li class="dropdown">
+							<a href="{{login_url_prefix}}/account/auth#!/signup?next={{ settings.APP_URL }}{% url auth_signin %}">Sign Up</a>
+						</li>
+			{% else %}
+				<!-- Logged in dropdowns -->
+					<li>
+						<a href="{{login_url_prefix}}/account#!/my-courses">
+							My Courses
+						</a>
+					</li>
+					<li class="dropdown">
+						<a class="dropdown-toggle" href="#"
+							onclick="$('#account-dropdown-menu').toggle(); return false;">
+								{{request.user.real_name}}<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu" id="account-dropdown-menu">
+							<li><a href="{{login_url_prefix}}/account">Account</a></li>
+							<li class="divider"></li>
+							<li><a href="{% url user_signout %}?next={{login_url_prefix}}/account/auth#!/signout">Sign Out</a></li>
+						</ul>
+					</li>
+				<!-- END Logged in dropdowns -->
+			{% endif %}
+			</ul>
+		</nav>
+	</div>
+</header>
+
+{% if settings.FORCE_OPENID_SIGNON %}
+{% if not request.user.is_authenticated %}
+<script>
+function signed_in_callback(signed_in) {
+	if (!signed_in) { return; }
+	var iframe = document.createElement('iframe');
+	$(iframe).css('width', 0).css('height', 0)
+		.css('display', 'none').css('visibility', 'hidden');
+	$(iframe).attr('src', '{% url auth_signin %}');
+	$("body").append(iframe);
+}
+
+$(function() {
+	var script = document.createElement('script');
+	script.type = 'text/javascript';
+	script.src = '{{login_url_prefix}}/openid/check?course=Unknown&callback=signed_in_callback&time=' + new Date().getTime();
+	$("body").append(script);
+});
+</script>
+{% endif %}
+{% endif %}
+
+<script src="{% media  "/media/js/jquery.cookies.2.2.0.js" %}"></script>
+<script>
+(function() {
+	var course;
+	while (true) {
+		course = /^#([a-z]{2}[\w-]+)$/.exec(location.hash);
+		if (course) { course = course[1]; break; }
+		course = $.cookies.get('forum_course');
+		if (course) { break; }
+		return;
+	}
+	if (!course) { return; }
+
+	var course_titles = {
+		'cs101': 'Introduction to Computer Science',
+		'ph100': 'Introduction to Physics',
+		'st095': 'Statistics',
+		'st101': 'Introduction to Statistics',
+		'cs215': 'Algorithms: Crunching Social Networks',
+		'cs222': 'Differential Equations in Action',
+		'cs253': 'Web Development',
+		'cs255': 'HTML5 Game Development',
+		'cs258': 'Software Testing',
+		'cs259': 'Software Debugging',
+		'cs262': 'Programming Languages',
+		'cs271': 'Introduction to Artificial Intelligence',
+		'cs291': 'Interactive 3D Graphics',
+		'cs313': 'Introduction to Theoretical Computer Science',
+		'ep245': 'How to Build a Startup',
+		'cs212': 'Design of Computer Programs',
+		'cs344': 'Introduction to Parallel Programming',
+		'cs348': 'Functional Hardware Verification',
+		'cs373': 'Artificial Intelligence for Robotics',
+		'cs387': 'Applied Cryptography',
+		'ma004': 'Intro Algebra Review',
+		'ma006': 'Visualizing Algebra',
+		'ma008': 'College Algebra',
+		'cs046': 'Introduction to Programming',
+		'ps001': 'Introduction to Psychology',
+		'design101': 'The Design of Everyday Things',
+		'bio110': 'Tales from the Genome',
+		'cs256': 'Mobile Web Development',
+		'ud651': 'Exploratory Data Analysis',
+		'ud162': 'Introduction to Salesforce App Development',
+		'ud359': 'Intro to Data Science',
+		'ud032': 'Data Wrangling with MongoDB',
+		'ud617': 'Introduction to Hadoop and MapReduce',
+
+		'ud098': 'CS 6210: Advanced Operating Systems - Background',
+		'ud702': 'CS 6210: Advanced Operating Systems - Part 1',
+		'ud710': 'CS 6210: Advanced Operating Systems - Part 2',
+		'ud712': 'CS 6210: Advanced Operating Systems - Part 3',
+		'ud819': 'CS 6250: Computer Networks - Part 1',
+		'ud399': 'CS 6250: Computer Networks - Part 2',
+		'ud432': 'CS 6250: Computer Networks - Part 3',
+		'ud233': 'CS 6290: High Performance Computer Architecture - Part 1',
+		'ud716': 'CS 6290: High Performance Computer Architecture - Part 2',
+		'ud629': 'CS 6290: High Performance Computer Architecture - Part 3',
+		'ud675': 'CS 7641: Machine Learning - Part 1',
+		'ud741': 'CS 7641: Machine Learning - Part 2',
+		'ud820': 'CS 7641: Machine Learning - Part 3',
+		'ud957': 'CS 6300: Software Development Processes - Part 1',
+		'ud175': 'CS 6300: Software Development Processes - Part 2',
+		'ud904': 'CS 6300: Software Development Processes - Part 3',
+		'ud494': 'CS 6300: Software Development Processes - Part 4'
+	};
+	if (!course_titles[course]) { return; }
+
+	$.cookies.set('forum_course', course, {path: '/', expiresAt: new Date(new Date().getTime() + 12*4*7*24*60*60*1000)});
+
+	if (location.pathname === '/') {
+		location = '/tags/' + course + '/#' + course;
+		return;
+	}
+
+	$(function() {
+		$('#search-class').val(course);
+		$('#' + course + '-announce').show();
+		$('#ask-question-href').attr('href', '{% url ask %}?tag=' + course);
+
+		$('#forum-left-hand-nav-title').text(course_titles[course]);
+		$('#forum-left-hand-nav a')[0].href = '{{login_url_prefix}}/course/viewer#!/c-' + course;
+		$('#forum-left-hand-nav a')[1].href = '{{login_url_prefix}}/course/progress#!/c-' + course;
+		$('#forum-left-hand-nav a')[2].href = '{{login_url_prefix}}/wiki/' + course;
+		$('#forum-left-hand-nav a')[3].href = '/tags/' + course + '/#' + course;
+                $('#forum-left-hand-nav a')[4].href = '{{login_url_prefix}}/course/' + course;
+		$('.span9').css('width', '784px')
+		$('#CAFull').css('width', '1042px')
+		$('#forum-left-hand-nav-title').show();
+		$('#forum-left-hand-nav').show();
+
+		var tags_rx = new RegExp('^/tags/(.*)/$');
+		$('a[href^="/"]').each(function() {
+			var a = $(this);
+			var href = a.attr('href');
+			if (href.indexOf('#') >= 0) { return; }
+			if (href.indexOf('/__debug__/') == 0) { return; }
+			var tags = tags_rx.exec(href);
+			if (tags && tags[1].indexOf(course) < 0) {
+				href = '/tags/' + tags[1] + ' ' + course + '/';
+			}
+			href = href + '#' + course;
+			a.attr('href', href);
+		});
+	});
+})();
+</script>
+<!-- end template header.html -->

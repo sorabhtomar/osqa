@@ -443,14 +443,8 @@ $(function() {
             var $dialog = show_dialog(doptions);
         } else {
             start_command();
-            $.ajax({
-                url: ajax_url,
-                type: "POST",
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                success: function(data) {
-                    process_ajax_response(data, evt);
-                }
+            $.getJSON(ajax_url, function(data) {
+                process_ajax_response(data, evt);
             });
         }
 
@@ -661,8 +655,8 @@ $(function() {
         });
     });
 
-    if ($('#wmd-input').length) {
-        var $editor = $('#wmd-input');
+    if ($('#editor').length) {
+        var $editor = $('#editor');
         var $previewer = $('#previewer');
         var $container = $('#editor-metrics');
 

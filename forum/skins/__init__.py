@@ -10,9 +10,9 @@ SKINS_FOLDER = path.dirname(__file__)
 DEFAULT_SKIN_NAME = 'default'
 
 def _list_dirs(include_common=False):
-    result = [_os.safe_join(SKINS_FOLDER, settings.OSQA_DEFAULT_SKIN)]
+    result = [_os.safe_join(SKINS_FOLDER, settings.OSQA_SKIN)]
 
-    skin_name = settings.OSQA_DEFAULT_SKIN
+    skin_name = settings.OSQA_SKIN
     while True:
         parent_txt = _os.safe_join(SKINS_FOLDER, skin_name, 'parent.txt')
         if not path.isfile(parent_txt):
@@ -24,7 +24,7 @@ def _list_dirs(include_common=False):
             break
         result.append(p)
 
-    if settings.OSQA_DEFAULT_SKIN != DEFAULT_SKIN_NAME:
+    if settings.OSQA_SKIN != DEFAULT_SKIN_NAME:
         result.append(_os.safe_join(SKINS_FOLDER, DEFAULT_SKIN_NAME))
     if include_common:
         result.append(_os.safe_join(SKINS_FOLDER, 'common'))
@@ -54,7 +54,7 @@ def find_media_source(url):
     """returns url prefixed with the skin name
     of the first skin that contains the file 
     directories are searched in this order:
-    settings.OSQA_DEFAULT_SKIN, then 'default', then 'common'
+    settings.OSQA_SKIN, then 'default', then 'common'
     if file is not found - returns None
     and logs an error message
     """

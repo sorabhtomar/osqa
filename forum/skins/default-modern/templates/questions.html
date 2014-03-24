@@ -1,0 +1,60 @@
+{% extends parent_template %}
+<!-- questions.html -->
+{% load question_list_tags %}
+{% load i18n %}
+{% load extra_tags %}
+{% load general_sidebar_tags %}
+
+{% block title %}{% spaceless %}{{ page_title }}{% endspaceless %}{% endblock %}
+
+{% block metadescription %}{% spaceless %}
+    {% if tag %}
+        {% blocktrans with settings.APP_TITLE as app_title %}Questions and answers about {{ tag }} on {{ app_title }}{% endblocktrans %}
+    {% else %}
+        {{ settings.APP_DESCRIPTION }}
+    {% endif %}
+{% endspaceless %}{% endblock %}
+
+{% block meta %}
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ feed_url }}" />
+{% endblock %}
+
+{% block forejs %}
+    {% if settings.ENDLESS_PAGINATION %}
+    <script src="{% media  "/media/js/endless-1.1-combo.js" %}" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var endless_on_scroll_margin = 20;
+    </script> 
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="tabBar">
+    {% include "question_list/title.html" %}
+    <a class="feed-icon" href="{{ feed_url }}" title="{% trans "subscribe to question RSS feed" %}"></a>
+    {{ questions.paginator.sort_tabs }}
+</div>
+<div id="listA">
+{% include page_template %}
+</div>
+{% endblock %}
+
+{% block tail %}
+    {% if not settings.ENDLESS_PAGINATION %}
+    <div class="pager">{{ questions.paginator.page_numbers }}</div>
+    <div class="pagesize">{{ questions.paginator.page_sizes }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block sidebar %}
+    <div id="CARight-col1">
+        {% include "question_list/count.html" %}
+        {% tag_selector %}
+        {% sidebar_upper %}
+    </div>
+    <div id="CARight-col2">
+        {% sidebar_lower %}
+        {% question_list_related_tags questions.paginator.page %}
+    </div>
+{% endblock %}
+<!-- end questions.html -->

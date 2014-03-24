@@ -1,0 +1,28 @@
+{% extends "base_content.html" %}
+{% load extra_tags ui_registry i18n extra_filters markup %}
+{% block page_center %}
+
+{% block full_width_banner %}{% endblock %}
+
+<div class="container">
+    {% block site_width_banner %}{% endblock %}
+    
+    <div class="row">
+        <div class="span9">
+            {% block content%}
+            {% endblock%}
+        </div>
+	<div class="span3">    
+            {% block sidebar%}
+            {% endblock%}
+        </div>
+    </div>
+    <div class="row">
+        <div class="span9">
+            {% block tail %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

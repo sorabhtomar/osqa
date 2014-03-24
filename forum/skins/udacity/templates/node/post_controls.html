@@ -1,0 +1,24 @@
+{% load i18n %}
+{% spaceless %}
+{% for control in controls %}
+    <span class="action-link">
+        <p class="caption" style="float: left;">
+            <a rel="nofollow" title="{{ control.title }}" class="{{ control.classes }}" href="{{ control.url }}">{{ control.text }}</a></a>
+    </span>
+    {% ifnotequal controls|last control %}
+        <span class="action-link-separator">|</span>
+    {% endifnotequal %}
+{% endfor %}
+
+{% if menu|length %}
+    <span class="action-link-separator">|</span>
+    <div id="node-{{ post.id }}-menu" class="context-menu" style="float: left;">
+        <span id="node-{{ post.id }}-menu-trigger" class="action-link context-menu-trigger foobar"><p class="caption">{% trans "more" %} &#9660;</p></span>
+        <ul id="node-{{ post.id }}-menu-dropdown" class="context-menu-dropdown fizzbuzz">
+            {% for item in menu %}
+            <li class="item"><a rel="nofollow" class="{{ item.classes }}" href="{{ item.url }}" title="{{ item.title }}" >{{ item.text }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% endspaceless %}

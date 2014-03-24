@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends parent_template %}
 <!-- question.html -->
 {% load node_tags %}
 {% load extra_tags %}
@@ -63,7 +63,7 @@
 
         function beforeUnload(e) {
 
-            if($("textarea#wmd-input")[0].value != "") {
+            if($("textarea#editor")[0].value != "") {
                 return yourWorkWillBeLost(e);
             }
 

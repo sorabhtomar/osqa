@@ -1,0 +1,37 @@
+{% load i18n humanize extra_filters extra_tags user_tags %}
+<div style="background-color:#FAFAFA; border-top:1px solid #DCDCDC; margin-bottom:14px; padding:0px 19px 2px 14px">
+    <div>
+        <div class="question-count-item">
+            <p class="ui"><span class="question-count-value">{{question.score|intcomma}}</span>
+            {% ifequal question.score 1 %}{% trans "vote" %}{% else %}{% trans "votes" %}{% endifequal %}</p>
+        </div>
+        <div class="question-count-item">
+            <p class="ui"><span class="question-count-value">{{question.answer_count|intcomma}}</span>
+            {% ifequal question.answer_count 1 %}{% trans "answer" %}{% else %}{% trans "answers" %}{% endifequal %}</p>
+        </div>
+        <div class="question-count-item">
+             <p class="ui"><span class="question-count-value">{{question.view_count|decorated_int|safe}}</span>
+             {% ifequal question.view_count 1 %}{% trans "view" %}{% else %}{% trans "views" %}{% endifequal %}</p>
+        </div>
+        <h2><a {% if not question_summary %}title="{{ question.summary }}"{% endif %} href="{{ question.get_absolute_url }}">{{question.headline}}</a></h2>
+    </div>
+
+    <div style="width:100%;text-align:right;">
+        <span style="font-weight:bold;float:left;">
+	{% if question.last_activity_by %}
+		<span style="margin-right:6px;">Last update by</span>{% user_signature question.last_activity_by signature_type %}
+		<span style="margin-left:6px;" class="relativetime" title="{{question.last_activity_at}}">{% diff_date question.last_activity_at %}</span>
+	{% else %}
+		<span style="margin-right:6px;">Posted by</span>{% user_signature question.author signature_type %}
+		<span style="margin-left:6px;" class="relativetime" title="{{question.added_at}}">{% diff_date question.added_at %}</span>
+	{% endif %}
+        </span>
+
+	{% for tag in question.tagname_list %}
+		{% if tag|if_not_morseltag %}
+		<a class="tag tag-link-{{ tag }}{{ tag|if_stafftag }}" href="{% url tag_questions tag|urlencode %}" title="{% trans "see questions tagged" %} '{{ tag }}'" rel="tag">{{ tag }}</a>
+		{% endif %}
+	{% endfor %}
+    </div>
+</div>
+

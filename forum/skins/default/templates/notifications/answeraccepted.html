@@ -17,7 +17,7 @@
     {% htmlcontent notifications/base.html %}
         <p style="{{ p_style }}">
             {% blocktrans %}
-            {{ accepted_by_link }} has just accepted {{ answer_author_link }}'s answer on his question
+            {{ accepted_by_link }} has just accepted {{ answer_author_link }}'s answer on the question
             {{ question_link }}.
             {% endblocktrans %}
         </p>
@@ -25,7 +25,7 @@
 
 {% textcontent notifications/base_text.html %}
 {% blocktrans %}
-{{ accepted_by }} has just accepted {{ answer_author }}'s answer on his question
+{{ accepted_by }} has just accepted {{ answer_author }}'s answer on the question
 "{{ question_title }}".
 {% endblocktrans %}
 {% endtextcontent %}

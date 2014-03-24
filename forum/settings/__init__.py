@@ -25,7 +25,7 @@ NODE_MAN_FILTERS = Setting('NODE_MAN_FILTERS', [])
 APP_URL = djsettings.APP_URL
 APP_BASE_URL = djsettings.APP_BASE_URL
 FORCE_SCRIPT_NAME = djsettings.FORCE_SCRIPT_NAME
-OSQA_SKIN = djsettings.OSQA_DEFAULT_SKIN
+OSQA_SKIN = djsettings.OSQA_SKIN
 LANGUAGE_CODE = djsettings.LANGUAGE_CODE
 ONLINE_USERS = Setting('ONLINE_USERS', {})
 
@@ -34,6 +34,7 @@ from basic import *
 from sidebar import *
 from email import *
 from extkeys import *
+from web import *
 from minrep import *
 from repgain import *
 from voting import *

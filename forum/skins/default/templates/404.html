@@ -1,4 +1,4 @@
-{% extends "base_content.html" %}
+{% extends parent_template %}
 <!-- template 404.html -->
 {% load i18n %}
 {% block title %}{% trans "404 Error" %}{% endblock %}
@@ -35,7 +35,8 @@
             var GOOG_FIXURL_LANG = '{{settings.LANGUAGE_CODE}}';
             var GOOG_FIXURL_SITE = '{{site_url}}';
         </script>
-        <script type="text/javascript" src="http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js"></script>
+        <!-- Script from http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js - CDN cannot be used due to lack of reliable https support -->
+        <script type="text/javascript" src="{% media "/media/js/fixurl.js" %}"></script>
         <ul>
             <li><a href="#" id="linkPrevious">{% trans "back to previous page" %} &raquo;</a></li>
             <li><a href="{% url "questions" %}">{% trans "see all questions" %} &raquo;</a></li>

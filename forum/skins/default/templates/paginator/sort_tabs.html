@@ -1,6 +1,6 @@
 {% load i18n %}
 {% spaceless %}
-<div class="tabsA">
+<div class="tabsA" id="tabsFull">
     {% for name, label, url, descr in sorts %}
         <a href="{{ url }}"{% ifequal current name %} class="on"{% endifequal %} title="{{ descr }}">{{ label }}</a>
     {% endfor %}
@@ -9,5 +9,17 @@
         <input title="{% trans "Check to make the sort order sticky" %}" type="checkbox" checked="{% if sticky %}checked{% endif %}" />
     </span>
     {% endcomment %}
+</div>
+{% endspaceless %}
+{% spaceless %}
+<div class="tabsA" id="tabsCompact">
+  <form>
+    <select name="{{ sort_param }}" onchange="window.location = this.form.{{ sort_param }}.value;">
+    {% for name, label, url, descr in sorts %}
+        <option value="{{ url }}" {% ifequal current name %} selected {% endifequal %}>{{ label }}</a>
+    {% endfor %}
+   </select>
+   <noscript>Sorry, Javascript is needed for this function!</noscript>
+  </form>
 </div>
 {% endspaceless %}

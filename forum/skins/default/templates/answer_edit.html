@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends parent_template %}
 <!-- template answer_edit.html -->
 {% load i18n %}
 {% load extra_tags %}
@@ -30,7 +30,7 @@
             });
 
 
-            answer = $("textarea#wmd-input")[0].value;
+            answer = $("textarea#editor")[0].value;
         });
 
 
@@ -46,7 +46,7 @@
         }
 
         function beforeUnload(e) {
-            if($("textarea#wmd-input")[0].value != answer) {
+            if($("textarea#editor")[0].value != answer) {
                  return yourWorkWillBeLost(e);
             }
         }

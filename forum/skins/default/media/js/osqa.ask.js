@@ -13,7 +13,7 @@ $(function () {
     $('div#tags_side_bar').hide();
 
     $('#id_title').focus(function(){changeSideBar('div#title_side_bar')});
-    $('#wmd-input').focus(function(){changeSideBar('div#editor_side_bar')});
+    $('#editor').focus(function(){changeSideBar('div#editor_side_bar')});
     $('#id_tags').focus(function(){changeSideBar('div#tags_side_bar')});
 });
 
@@ -21,7 +21,7 @@ $(function() {
     var $input = $('#id_title');
     var $box = $('#ask-related-questions');
     var template = $('#question-summary-template').html();
-    var $editor = $('#wmd-input');
+    var $editor = $('#editor');
 
     var results_cache = {};
 
@@ -57,10 +57,13 @@ $(function() {
 
                 var html = '';
                 for (var i = 0; i < data.length; i++) {
+                    var className = 'answer-votes';
+                    className = data[i].accepted > 0 ? className + ' answered-accepted' : className;
                     var item = template.replace(new RegExp('%URL%', 'g'), data[i].url)
                                        .replace(new RegExp('%SCORE%', 'g'), data[i].score)
                                        .replace(new RegExp('%TITLE%', 'g'), data[i].title)
-                                       .replace(new RegExp('%SUMMARY%', 'g'), data[i].summary);
+                                       .replace(new RegExp('%SUMMARY%', 'g'), data[i].summary)
+                                       .replace(new RegExp('%VOTECLASS%', 'g'), className);
 
                     html += item;
 
@@ -98,7 +101,7 @@ $(function() {
         var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 
         if(e.keyCode == 9 && is_chrome) {
-            $('#wmd-input')[0].focus();
+            $('#editor')[0].focus();
         }
     }
 });

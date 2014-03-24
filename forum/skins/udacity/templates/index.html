@@ -1,0 +1,48 @@
+{% extends "questions.html" %}
+<!-- index.html -->
+{% load general_sidebar_tags %}
+{% load question_list_tags %}
+{% load i18n %}
+{% block fulltitle %}{{ settings.APP_TITLE }}{% endblock %}
+{% block sidebar %}
+    <div class="boxA">
+        <a href="{% url ask %}" id="ask-question-href">
+            <button class="btn btn-primary btn-large" style="width:100%;">Start a discussion</button>
+        </a>
+    </div>
+    {% if not request.user.is_authenticated %}
+        {% if settings.SHOW_WELCOME_BOX %}
+            <div class="boxA">
+                <h3>{% trans "welcome to " %}{{ settings.APP_SHORT_NAME }}</h3>
+                <div class="body">
+                  {{ settings.APP_INTRO|safe }}
+                  <div class="more"><a href="{% url about %}">{% trans "about" %} &raquo;</a></div>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+    <div id="CARight-col1">
+        {% include "question_list/count.html" %}
+        {% if request.user.is_authenticated %}
+            {% tag_selector %}
+        {% endif %}
+        {% sidebar_upper %}
+    </div>
+    <div id="CARight-col2">
+    	<div class="boxC" id="searchBar">
+            <h3>Search the Forums</h3>
+            <form action="{% url search %}" method="get">
+                {% csrf_token %}
+                <div>
+                    <input type="text" class="searchInput form-control" value="{{ keywords }}" name="q" id="keywords" style="display:block; height: inherit;" />
+                    <input type="hidden" value="question" name="t"/>
+                    <br/>
+                    <input type="submit" name="Submit" value="{% trans "search" %}" class="btn btn-default" style="display:block;margin-top:12px;" />
+                </div>
+            </form>
+    	</div>
+        {% sidebar_lower %}
+    </div>
+{% endblock %}
+<!-- index.html -->
+

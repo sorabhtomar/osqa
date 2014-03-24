@@ -49,11 +49,13 @@
                         </h3>
                     </th>
                 </tr>
-                {% if view_user.real_name %}
-                <tr>
-                    <td>{% trans "real name" %}</td>
-                    <td><b>{{view_user.real_name}}</b></td>
-                </tr>
+                {% if can_view_private %}
+	                {% if view_user.real_name %}
+	                <tr>
+	                    <td>{% trans "real name" %}</td>
+	                    <td><b>{{view_user.real_name}}</b></td>
+	                </tr>
+	                {% endif %}
                 {% endif %}
                 <tr>
                     <td>{% trans "member for" %}</td>

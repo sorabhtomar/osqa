@@ -1,4 +1,4 @@
-{% extends "base_content.html" %}
+{% extends parent_template %}
 <!-- user_edit.html -->
 {% load extra_tags %}
 {% load humanize %}
@@ -16,9 +16,7 @@
                     changeMonth: true,
                     changeYear: true,
                     dateFormat: 'yy-mm-dd',
-                    minDate: null,
-                    maxDate: '0M 0D',
-                    yearRange: '1920:2010'
+                    yearRange: '1920:2020'
                 });
 
                 $("#nav_profile").attr('className',"on");

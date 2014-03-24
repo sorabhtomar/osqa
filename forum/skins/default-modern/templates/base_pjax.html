@@ -1,0 +1,21 @@
+    <title>{% block fulltitle %}{% block title %}{% endblock %} - {{ settings.APP_SHORT_NAME }}{% endblock %}</title>
+    {% block forestyle %}{% endblock %}
+    {% include "base_onready.html" %}
+    {% block forejs %}{% endblock %}
+    {% block site_width_banner %}{% endblock %}
+    <div id="room">
+        <div id="CALeft">
+            {% block content%}
+            {% endblock%}
+        </div>
+        <div id="CARight">
+            {% block sidebar%}
+            {% endblock%}
+
+        </div>
+        <div id="tail" style="clear:both;">
+            {% block tail %}
+            {% endblock %}
+        </div>
+    </div>
+    <div class="spacer3"></div>

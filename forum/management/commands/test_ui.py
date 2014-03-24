@@ -22,7 +22,7 @@ class Command(BaseCommand):
             exit("Python Selenium couldn't be loaded: pip install selenium")
 
         # Tests folder
-        TEST_FOLDER = '%s/forum/skins/%s/tests' % (django_settings.SITE_SRC_ROOT, django_settings.OSQA_DEFAULT_SKIN)
+        TEST_FOLDER = '%s/forum/skins/%s/tests' % (django_settings.SITE_SRC_ROOT, django_settings.OSQA_SKIN)
 
         # Check if the UI tests folder exists
         if os.path.exists(TEST_FOLDER):

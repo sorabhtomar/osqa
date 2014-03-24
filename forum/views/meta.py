@@ -1,8 +1,6 @@
 import os
 from itertools import groupby
 
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.cache import cache_page
 from django.utils.translation import ugettext as _
@@ -12,10 +10,12 @@ from django.contrib import messages
 
 from forum import settings
 from forum.views.decorators import login_required
+from forum.views.render import render_response
 from forum.forms import FeedbackForm
 from forum.modules import decorate
 from forum.forms import get_next_url
 from forum.models import Badge, Award, User, Page
+from forum.badges.base import BadgesMeta
 from forum.http_responses import HttpResponseNotFound, HttpResponseIntServerError
 from forum.utils.mail import send_template_email
 from forum.templatetags.extra_filters import or_preview
@@ -36,15 +36,15 @@ def redirect_or_static(request, target, title, content):
     return static(request, title, content)
 
 def static(request, title, content):
-    return render_to_response('static.html', {'content' : content, 'title': title},
-                              context_instance=RequestContext(request))
+    return render_response('static.html', {'content' : content, 'title': title},
+                              request)
 
 def markdown_help(request):
-    return render_to_response('markdown_help.html', context_instance=RequestContext(request))
+    return render_response('markdown_help.html', {}, request)
 
 @cache_page(60 * 60 * 24 * 30) #30 days
 def opensearch(request):
-    return render_to_response('opensearch.html', {'settings' : settings}, context_instance=RequestContext(request))
+    return render_response('opensearch.html', {'settings' : settings}, request)
 
 def feedback(request):
     if request.method == "POST":
@@ -72,17 +72,16 @@ def feedback(request):
 feedback.CANCEL_MESSAGE=_('We look forward to hearing your feedback! Please, give it next time :)')
 
 def privacy(request):
-    return render_to_response('privacy.html', context_instance=RequestContext(request))
+    return render_response('privacy.html', {}, request)
 
 @decorate.withfn(login_required)
 def logout(request):
-    return render_to_response('logout.html', {
+    return render_response('logout.html', {
     'next' : get_next_url(request),
-    }, context_instance=RequestContext(request))
+    }, request)
 
 @decorators.render('badges.html', 'badges', _('badges'), weight=300)
 def badges(request):
-    from forum.badges.base import BadgesMeta
     badges = sorted([Badge.objects.get(id=id) for id in BadgesMeta.by_id.keys()], lambda b1, b2: cmp(b1.name, b2.name))
 
     if request.user.is_authenticated():
@@ -97,17 +96,25 @@ def badges(request):
 
 def badge(request, id, slug):
     badge = Badge.objects.get(id=id)
-    awards = list(Award.objects.filter(badge=badge).order_by('user', 'awarded_at'))
+    max_awards_to_show = 1024
+    awards = list(Award.objects.filter(badge=badge).order_by('user', 'awarded_at')[:max_awards_to_show])
     award_count = len(awards)
+    if award_count == max_awards_to_show:
+        award_count = Award.objects.filter(badge=badge).count()
 
-    awards = sorted([dict(count=len(list(g)), user=k) for k, g in groupby(awards, lambda a: a.user)],
-                    lambda c1, c2: c2['count'] - c1['count'])
+    # client side aggregation. This can be fixed and moved to server-side once we upgrade to Django 1.4
+    # It doesn't work on 1.3 because of this: https://code.djangoproject.com/ticket/17144
+    awards = sorted(
+        [ dict(count=len(list(g)), user=k) for k, g in groupby(awards, lambda a: a.user) ],
+        lambda c1, c2: c2['count'] - c1['count']
+    )
 
-    return render_to_response('badge.html', {
+
+    return render_response('badge.html', {
     'award_count': award_count,
     'awards' : awards,
     'badge' : badge,
-    }, context_instance=RequestContext(request))
+    }, request)
 
 def page(request):
     path = request.path[1:]
@@ -150,12 +157,12 @@ def page(request):
     else:
         body = page.body
 
-    return render_to_response('page.html', {
+    return render_response('page.html', {
     'page' : page,
     'body' : body,
     'sidebar': sidebar,
     'base': base,
-    }, context_instance=RequestContext(request))
+    }, request)
 
 
 def error_handler(request):

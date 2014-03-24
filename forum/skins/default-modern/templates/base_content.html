@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- base_content.html -->
+{% load i18n extra_tags extra_filters markup ui_registry %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>{% block after_head_js %}{% endblock %}
+        <title>{% block fulltitle %}{% block title %}{% endblock %} - {{ settings.APP_SHORT_NAME }}{% endblock %}</title>
+        <meta name="description" content="{% block metadescription %}{{ settings.APP_DESCRIPTION }}{% endblock %}" />
+        <meta name="keywords" content="{% block metakeywords %}{{ settings.APP_KEYWORDS }}{% endblock %}" />
+        {% block meta %}{% endblock %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0"/>
+        {% if settings.GOOGLE_SITEMAP_CODE %}
+        <meta name="google-site-verification" content="{{ settings.GOOGLE_SITEMAP_CODE }}" />
+        {% endif %}
+        <link rel="shortcut icon" href="{{ settings.APP_FAVICON }}" />
+        {% if settings.CSS_SPRITES %}
+        <link href="{% media  "/media/style/style-sprite.css" %}" rel="stylesheet" type="text/css" />
+        {% else %}
+        <link href="{% media  "/media/style/style.css" %}" rel="stylesheet" type="text/css" />
+        {% endif %}
+        {% if settings.USE_CUSTOM_CSS|or_preview:request %}
+        <link href="{% url custom_css %}" rel="stylesheet" type="text/css" />
+        {% endif %}
+        <!--[if IE 6]>
+        <style type="text/css">
+        img, div, a { behavior: url({% media "/media/iepngfix/iepngfix.htc" %}) }
+        </style>
+        <![endif]-->
+        {% block forestyle %}{% endblock %}
+
+        {% if settings.CDN_ON %}
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery{{settings.MINIFIED_RESOURCES|yesno:".min,"}}.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui{{settings.MINIFIED_RESOURCES|yesno:".min,"}}.js"></script>
+        <script src="{% media  "/media/js/jquery.waypoints-1.1.5.js" %}"></script>
+        {% else %}
+        <script src="{% media  "/media/js/jquery-1.7.1-ui-1.8.18-waypoints-1.1.5-combo.js" %}" type="text/javascript"></script>
+        {% endif %}
+
+        <script type="text/javascript">
+            var i18nLang = '{{ settings.LANGUAGE_CODE }}';
+            var appUrl = '{{ settings.APP_URL }}'
+            var scriptUrl = '{{ settings.FORCE_SCRIPT_NAME }}/'
+            var osqaSkin = '{{ settings.OSQA_SKIN }}';
+
+            var messages = {
+                username: '{{ user.username }}',
+                confirm: "{% trans "Are you sure?" %}",
+                yes: "{% trans "Yes" %}",
+                no: "{% trans "No" %}",
+                message: "{% trans "Message:" %}",
+                cancel: "{% trans "Cancel" %}",
+                close: "{% trans "Close" %}",
+                ok: "{% trans "Ok" %}",
+                matching_tags_url: "{% url matching_tags %}",
+                word: "{% trans "word" %}",
+                words: "{% trans "words" %}",
+                character: "{% trans "character" %}",
+                characters: "{% trans "characters" %}"
+            }
+        </script>
+        <script type="text/javascript" src="{% media  "/media/js/osqa.main.js" %}"></script>
+        {% include "base_onready.html" %}
+        {% if settings.MATHJAX_ENABLED %}
+        <script type="text/x-mathjax-config">
+           MathJax.Hub.Config({
+             "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] },
+             tex2jax: { inlineMath: [ ["$%","$%"] ],
+                        displayMath: [ ["$$","$$"] ],
+                        processEscapes: true,
+                        ignoreClass: "tex2jax_ignore|dno"
+             },
+             TeX: { noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } } },
+             messageStyle: "none"
+           });
+        </script>
+        <script type="text/javascript"
+          src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        </script>
+        {% endif %}        
+
+        {% if settings.ENDLESS_PAGINATION %}
+        <script type="text/javascript" src="{% media  "/media/js/jquery.pjax-8df345b0e7.js" %}"></script>
+        <script type="text/javascript">
+            $(function(){
+                $.pjax.defaults.timeout = {{ settings.PJAX_TIMEOUT|default:1500 }};
+
+                /* Bind PJAX to all anchors except those that perform AJAX actions or inline actions directly */
+                // TODO add a common class/attribute to exclude anchors from pjax
+                $('a:not(.endless_more, .endless_page_link, .ajax-command, .action-link, .add-comment-link, .edit-comment, .feed-icon, #close-notify)').pjax('#wrapper');
+
+                $('#wrapper').on('pjax:start', function(event) {
+                    // nothing
+                }).on('pjax:end', function(event, xhr, args) {
+                    var scrollPos = 0;
+                    if ($('#navBar').hasClass('sticky')) {
+                        scrollPos = $('#top').outerHeight(true);
+                    }
+                    $(window).scrollTop(scrollPos);
+                });
+
+                /* Loading indicator and navigation handling */
+                $('#wrapper').on('pjax:start', function() {
+                    $('#indicator').toggleClass('hidden', false);
+                }).on('pjax:end', function(event, xhr, args) {
+                    $('#indicator').toggleClass('hidden', true);
+
+                    $('#nav').children('a').each(function(i) {
+                        var re = new RegExp($(this).attr('href') + '($|\\?)');
+                        $(this).toggleClass('on', re.test(window.location.pathname));
+                    });
+                });
+            })
+        </script>
+        {% endif %}
+        {% if user_messages %}
+        <style type="text/css">
+            body { margin-top:2.4em; }
+        </style>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var element = $('#validate_email_alert');
+                element.click(function(){notify.close(true);})
+                notify.show();
+            });
+        </script>
+        {% endif %}
+        {% if settings.USE_CUSTOM_HEAD|or_preview:request %}
+            {{ settings.CUSTOM_HEAD|or_preview:request|safe }}
+        {% endif %}
+        {% block forejs %}{% endblock %}
+        <link rel="search" type="application/opensearchdescription+xml" href="{% url opensearch %}" title="{{ settings.APP_SHORT_NAME }} Search" />
+        {% loadregistry head_content %}{% endloadregistry %}
+    </head>
+    <body>
+        <div id="page">
+        {% if settings.USE_CUSTOM_HEADER|or_preview:request %}
+            <div id="custom_header">
+                {{ settings.CUSTOM_HEADER|or_preview:request|static_content:settings.CUSTOM_HEADER_RENDER_MODE }}
+            </div>
+        {% endif %}
+        {% include "header.html" %}
+        {% block page_center %}
+        <div id="wrapper">
+            <div id="room">
+                <div id="CAFull">
+                    {% block content%}
+                    {% endblock%}
+
+                </div>
+                <div id="tail" style="clear:both;">
+                    {% block tail %}
+                    {% endblock %}
+                </div>
+            </div>
+            <div class="spacer3"></div>
+        </div>
+        {% endblock %}
+        {% if not settings.ENDLESS_PAGINATION %}
+            {% if settings.USE_CUSTOM_FOOTER|or_preview:request %}
+                {% ifequal settings.CUSTOM_FOOTER_MODE|or_preview:request "above" %}
+                    <div id="custom_footer">
+                        {{ settings.CUSTOM_FOOTER|or_preview:request|static_content:settings.CUSTOM_FOOTER_RENDER_MODE }}
+                    </div>
+               {% endifequal %}
+                <div id="ground">
+                    {% ifequal settings.CUSTOM_FOOTER_MODE|or_preview:request "replace" %}
+                        {{ settings.CUSTOM_FOOTER|or_preview:request|static_content:settings.CUSTOM_FOOTER_RENDER_MODE }}
+                    {% else %}
+                        {% include "footer.html" %}
+                    {% endifequal %}
+                </div>
+                {% ifequal settings.CUSTOM_FOOTER_MODE|or_preview:request "below" %}
+                    <div id="custom_footer">
+                        {{ settings.CUSTOM_FOOTER|or_preview:request|static_content:settings.CUSTOM_FOOTER_RENDER_MODE }}
+                    </div>
+                {% endifequal %}
+            {% else %}
+                <div id="ground">
+                    {% include "footer.html" %}
+                </div>
+            {% endif %}
+        {% endif %}
+        {% block endjs %}
+        {% endblock %}
+        {% if settings.GOOGLE_ANALYTICS_KEY %}
+            <script type="text/javascript">
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', '{{ settings.GOOGLE_ANALYTICS_KEY }}']);
+                _gaq.push(['_trackPageview']);
+
+                (function() {
+                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+            </script>
+        {% endif %}
+        </div>
+
+        <!-- Put all elements with fixed position here, IE6 fixed position fix: http://ryanfait.com/position-fixed-ie6/ -->
+        <div class="notify" style="display:none">
+            {% autoescape off %}
+                {% if user_messages %}
+                    {% for message in user_messages %}
+                          <p class="darkred">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endautoescape %}
+            <a id="close-notify" onclick="notify.close(true)">&#215;</a>
+        </div>
+    </body>
+</html>
+<!-- end template base_content.html -->

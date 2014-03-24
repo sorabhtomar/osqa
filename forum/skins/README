@@ -10,13 +10,13 @@ default/templates - templates must be named the same way
 NO NEED TO CREATE ALL TEMPLATES/MEDIA FILES AT ONCE
 
 templates are resolved in the following way:
-* check in skin named as in settings.OSQA_DEFAULT_SKIN
+* check in skin named as in settings.OSQA_SKIN
 * if the skin contains a parent.txt, the skin speficied in it is checked
 * if the parent skin contains a parent.txt, the grandparent is checked and so on
 * then skin named 'default'
 
 media is resolved with one extra option
-* settings.OSQA_DEFAULT_SKIN
+* settings.OSQA_SKIN
 * parent, grandparent, etc
 * 'default'
 * 'common'

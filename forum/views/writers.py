@@ -6,8 +6,7 @@ import datetime
 from django.core.urlresolvers import reverse
 from django.core.files.storage import FileSystemStorage
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.utils.html import *
 from django.utils.translation import ugettext as _
@@ -129,7 +128,7 @@ def convert_to_question(request, id):
         return HttpResponseUnauthorized(request)
 
     return _edit_question(request, node, template='node/convert_to_question.html', summary=_("Converted to question"),
-                           action_class =action_class, allow_rollback=False, url_getter=lambda a: Question.objects.get(id=a.id).get_absolute_url())
+                           action_class=action_class, allow_rollback=False, url_getter=lambda a: Question.objects.get(id=a.id).get_absolute_url())
 
 def edit_question(request, id):
     question = get_object_or_404(Question, id=id)
@@ -176,14 +175,13 @@ def _retag_question(request, question):
             return HttpResponseRedirect(question.get_absolute_url())
     else:
         form = RetagQuestionForm(question)
-    return render_to_response('question_retag.html', {
+    return render_response('question_retag.html', {
         'question': question,
         'form' : form,
         #'tags' : _get_tags_cache_json(),
-    }, context_instance=RequestContext(request))
+    }, request, parent_template="base.html")
 
-def _edit_question(request, question, template='question_edit.html', summary='', action_class=ReviseAction,
-                   allow_rollback=True, url_getter=lambda q: q.get_absolute_url(), additional_context=None):
+def _edit_question(request, question, template='question_edit.html', summary='', action_class=ReviseAction, allow_rollback=True, url_getter=lambda q: q.get_absolute_url()):
     if request.method == 'POST':
         revision_form, form, revision = _get_edit_question_forms_from_postdata(request, question)
 
@@ -208,16 +206,11 @@ def _edit_question(request, question, template='question_edit.html', summary='',
         revision_form = RevisionForm(question)
         form = EditQuestionForm(question, request.user, initial={'summary': summary})
 
-    context = {
+    return render_response(template, {
         'question': question,
         'revision_form': revision_form,
         'form' : form,
-    }
-
-    if not (additional_context is None):
-        context.update(additional_context)
-
-    return render_to_response(template, context, context_instance=RequestContext(request))
+    }, request, parent_template="base.html")
 
 
 def edit_answer(request, id):
@@ -255,11 +248,11 @@ def edit_answer(request, id):
     else:
         revision_form = RevisionForm(answer)
         form = EditAnswerForm(answer, request.user)
-    return render_to_response('answer_edit.html', {
+    return render_response('answer_edit.html', {
                               'answer': answer,
                               'revision_form': revision_form,
                               'form': form,
-                              }, context_instance=RequestContext(request))
+                              }, request)
 
 def answer(request, id):
     question = get_object_or_404(Question, id=id)

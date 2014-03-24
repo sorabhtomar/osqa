@@ -63,9 +63,9 @@ from settings_local import *
 
 def _list_possible_dirs(include_common=False):
     DEFAULT_SKIN_NAME = 'default'
-    result = [_os.safe_join(SKINDIR, OSQA_DEFAULT_SKIN)]
+    result = [_os.safe_join(SKINDIR, OSQA_SKIN)]
 
-    skin_name = OSQA_DEFAULT_SKIN
+    skin_name = OSQA_SKIN
     while True:
         parent_txt = _os.safe_join(SKINDIR, skin_name, 'parent.txt')
         if not os.path.isfile(parent_txt):
@@ -77,7 +77,7 @@ def _list_possible_dirs(include_common=False):
             break
         result.append(p)
 
-    if OSQA_DEFAULT_SKIN != DEFAULT_SKIN_NAME:
+    if OSQA_SKIN != DEFAULT_SKIN_NAME:
         result.append(_os.safe_join(SKINDIR, DEFAULT_SKIN_NAME))
     if include_common:
         result.append(_os.safe_join(SKINDIR, 'common'))

@@ -55,7 +55,7 @@ DATABASES = {
     }
 }
 
-CACHE_BACKEND = 'file://%s' % os.path.join(os.path.dirname(__file__),'cache').replace('\\','/')
+CACHE_BACKEND = 'file://%s' % os.path.join(SITE_SRC_ROOT, 'cache').replace('\\','/')
 #CACHE_BACKEND = 'dummy://'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
@@ -72,6 +72,6 @@ TIME_ZONE = 'America/New_York'
 USE_I18N = True
 LANGUAGE_CODE = 'en'
 
-OSQA_DEFAULT_SKIN = 'default'
+OSQA_SKIN = 'default'
 
 DISABLED_MODULES = ['books', 'recaptcha', 'project_badges']

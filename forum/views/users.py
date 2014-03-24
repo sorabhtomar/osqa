@@ -4,8 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from forum.http_responses import HttpResponseUnauthorized
 from django.utils.translation import ugettext as _
@@ -17,10 +16,11 @@ from forum.forms import *
 from forum.utils.html import sanitize_html
 from forum.modules import decorate, ReturnImediatelyException
 from datetime import datetime, date
-from forum.actions import EditProfileAction, FavoriteAction, BonusRepAction, SuspendAction, ReportAction
+from forum.actions import EditProfileAction, FavoriteAction, BonusRepAction, SuspendAction, ReportAction, DeleteAction
 from forum.modules import ui
 from forum.utils import pagination
 from forum.views.readers import QuestionListPaginatorContext, AnswerPaginatorContext
+from forum.views.render import render_response
 from forum.settings import ONLINE_USERS
 
 from django.contrib import messages
@@ -124,13 +124,13 @@ def online_users(request):
     else:
         users = sorted(ONLINE_USERS.iteritems(), key=lambda x: x[1])
 
-    return render_to_response('users/online_users.html', {
+    return render_response('users/online_users.html', {
         "users" : users,
         "suser" : suser,
         "sort" : sort,
         "page" : page,
         "pageSize" : pagesize,
-    })
+    }, request)
 
 
 def edit_user(request, id, slug):
@@ -169,11 +169,11 @@ def edit_user(request, id, slug):
             return HttpResponseRedirect(user.get_profile_url())
     else:
         form = EditUserForm(user)
-    return render_to_response('users/edit.html', {
+    return render_response('users/edit.html', {
     'user': user,
     'form' : form,
     'gravatar_faq_url' : reverse('faq') + '#gravatar',
-    }, context_instance=RequestContext(request))
+    }, request)
 
 
 @decorate.withfn(decorators.command)
@@ -201,7 +201,7 @@ def user_powers(request, id, action, status):
 @decorate.withfn(decorators.command)
 def award_points(request, id):
     if not request.POST:
-        return render_to_response('users/karma_bonus.html')
+        return render_response('users/karma_bonus.html', {}, request)
 
     if not request.user.is_superuser:
         raise decorators.CommandException(_("Only superusers are allowed to award reputation points"))
@@ -235,7 +235,7 @@ def suspend(request, id):
             suspension.cancel(user=request.user, ip=request.META['REMOTE_ADDR'])
             return decorators.RefreshPageCommand()
         else:
-            return render_to_response('users/suspend_user.html')
+            return render_response('users/suspend_user.html', {}, request)
 
     data = {
         'bantype': request.POST.get('bantype', 'Indefinitely').strip(),
@@ -251,6 +251,9 @@ def suspend(request, id):
             raise decorators.CommandException(_('Invalid numeric argument for the number of days.'))
 
     SuspendAction(user=request.user, ip=request.META['REMOTE_ADDR']).save(data=data)
+    if request.POST.get('mark_nodes_deleted', None):
+        for node in Node.objects.all().filter(author=user):
+            DeleteAction(node=node, user=request.user, ip=request.META['REMOTE_ADDR']).save()
 
     return decorators.RefreshPageCommand()
 
@@ -316,7 +319,7 @@ def user_view(template, tab_name, tab_title, tab_description, private=False, tab
                 "page_title" : rev_page_title,
                 "can_view_private": (user == request.user) or request.user.is_superuser
             })
-            return render_to_response(template, context, context_instance=RequestContext(request))
+            return render_response(template, context, request)
 
         decorated = decorate.result.withfn(result, needs_params=True)(decorated)
 

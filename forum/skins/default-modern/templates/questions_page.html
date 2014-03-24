@@ -1,0 +1,24 @@
+{% load question_list_tags %}
+{% load i18n %}
+
+{% if settings.ENDLESS_PAGINATION %}
+    {% load endless %}
+    {% paginate questions %}
+    {% for question in questions %}
+        {% if show_summary %}
+            {% question_list_item question question_summary=yes %}
+        {% else %}
+            {% question_list_item question %}
+        {% endif %}
+    {% endfor %}
+    {% show_more %}
+{% else %}
+    {% for question in questions.paginator.page %}
+        {% if show_summary %}
+            {% question_list_item question question_summary=yes %}
+        {% else %}
+            {% question_list_item question %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+

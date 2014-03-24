@@ -5,8 +5,7 @@ import logging
 import urllib
 from urlparse import urlparse
 
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
@@ -29,6 +28,7 @@ from forum.authentication.base import InvalidAuthentication
 from forum.authentication import AUTH_PROVIDERS
 from forum.models import User, AuthKeyUserAssociation, ValidationHash
 from forum.actions import UserJoinsAction, UserLoginAction
+from forum.views.render import render_response
 from forum import settings
 
 from vars import ON_SIGNIN_SESSION_ATTR, PENDING_SUBMISSION_SESSION_ATTR
@@ -68,7 +68,7 @@ def signin_page(request):
     except:
         msg = None
 
-    return render_to_response(
+    return render_response(
             'auth/signin.html',
             {
             'msg': msg,
@@ -78,7 +78,7 @@ def signin_page(request):
             'stackitem_providers': stackitem_providers,
             'smallicon_providers': smallicon_providers,
             },
-            RequestContext(request))
+            request)
 
 def prepare_provider_signin(request, provider):
     force_email_request = request.REQUEST.get('validate_email', 'yes') == 'yes'
@@ -223,12 +223,12 @@ def external_register(request):
 
     provider_context = AUTH_PROVIDERS[request.session['auth_provider']].context
 
-    return render_to_response('auth/complete.html', {
+    return render_response('auth/complete.html', {
     'form1': form1,
     'provider':provider_context and mark_safe(provider_context.human_name) or _('unknown'),
     'login_type':provider_context.id,
     'gravatar_faq_url':reverse('faq') + '#gravatar',
-    }, context_instance=RequestContext(request))
+    }, request)
 
 def request_temp_login(request):
     if request.method == 'POST':
@@ -258,9 +258,9 @@ def request_temp_login(request):
     else:
         form = TemporaryLoginRequestForm()
 
-    return render_to_response(
+    return render_response(
             'auth/temp_login_request.html', {'form': form},
-            context_instance=RequestContext(request))
+            request)
 
 def temp_signin(request, user, code):
     user = get_object_or_404(User, id=user)
@@ -310,7 +310,7 @@ def validate_email(request, user, code):
         EmailValidationAction(user=user, ip=request.META['REMOTE_ADDR']).save()
         return login_and_forward(request, user, reverse('index'), _("Thank you, your email is now validated."))
     else:
-        return render_to_response('auth/mail_already_validated.html', { 'user' : user }, RequestContext(request))
+        return render_response('auth/mail_already_validated.html', { 'user' : user }, request)
 
 def auth_settings(request, id):
     user_ = get_object_or_404(User, id=id)
@@ -359,14 +359,14 @@ def auth_settings(request, id):
         'id': k.id
         })
 
-    return render_to_response('auth/auth_settings.html', {
+    return render_response('auth/auth_settings.html', {
     'view_user': user_,
     "can_view_private": (user_ == request.user) or request.user.is_superuser,
     'form': form,
     'has_password': user_.has_usable_password(),
     'auth_keys': auth_keys_list,
     'allow_local_auth': AUTH_PROVIDERS.get('local', None),
-    }, context_instance=RequestContext(request))
+    }, request)
 
 def remove_external_provider(request, id):
     association = get_object_or_404(AuthKeyUserAssociation, id=id)
@@ -376,6 +376,10 @@ def remove_external_provider(request, id):
     messages.info(request, _("You removed the association with %s") % association.provider)
     association.delete()
     return HttpResponseRedirect(reverse('user_authsettings', kwargs={'id': association.user.id}))
+
+def get_manage_link(action, title):
+    result = django_settings.APP_URL + reverse('manage_pending_data', prefix='/', kwargs={'action': _(action)})
+    return html.hyperlink(result, title)
 
 def login_and_forward(request, user, forward=None, message=None):
     if user.is_suspended():
@@ -403,9 +407,9 @@ def login_and_forward(request, user, forward=None, message=None):
             del request.session[PENDING_SUBMISSION_SESSION_ATTR]
         elif submission_time < datetime.datetime.now() - datetime.timedelta(minutes=int(settings.WARN_PENDING_POSTS_MINUTES)):
             messages.info(request, (_("You have a %s pending submission.") % pending_data['data_name']) + " %s, %s, %s" % (
-                html.hyperlink(reverse('manage_pending_data', kwargs={'action': _('save')}), _("save it")),
-                html.hyperlink(reverse('manage_pending_data', kwargs={'action': _('review')}), _("review")),
-                html.hyperlink(reverse('manage_pending_data', kwargs={'action': _('cancel')}), _("cancel"))
+                get_manage_link('save', _('save it')),
+                get_manage_link('review', _('review')),
+                get_manage_link('cancel', _('cancel')),
             ))
         else:
             return manage_pending_data(request, _('save'), forward)
@@ -438,5 +442,6 @@ def forward_suspended_user(request, user, show_private_msg=True):
 
 @decorate.withfn(login_required)
 def signout(request):
+    forward_url = request.GET.get('next', reverse('index'))
     logout(request)
-    return HttpResponseRedirect(reverse('index'))
+    return HttpResponseRedirect(forward_url)
