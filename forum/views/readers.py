@@ -125,15 +125,24 @@ def questions(request):
                          Question.objects.all(),
                          _('questions'))
 
-@decorators.render('questions.html')
-def tag(request, tag):
+def get_tag_obj(tag):
+    tag_obj = None
     try:
-        tag = Tag.active.get(name=unquote(tag))
+        tag_obj = Tag.active.get(name=unquote(tag))
     except Tag.DoesNotExist:
-        raise Http404
+        if settings.DISPLAY_EMPTY_LIST_FOR_NONEXISTENT_TAGS:
+            tag_obj = Tag(name=unquote(tag), used_count=0, created_by_id=-1)
+            tag_obj.id = -1
+        else:
+            raise Http404
+    return tag_obj
 
-    # Getting the questions QuerySet
-    questions = Question.objects.filter(tags__id=tag.id)
+def tag(request, tag):
+    tag_objs = [get_tag_obj(t) for t in tag.split()]
+    questions = Question.objects.filter_state(deleted=False)
+    for t in tag_objs:
+        questions = questions.filter(tags__id=t.id)
+    tag_obj = tag_objs[0]
 
     if request.method == "GET":
         user = request.GET.get('user', None)
@@ -146,15 +155,15 @@ def tag(request, tag):
 
     # The extra tag context we need to pass
     tag_context = {
-        'tag' : tag,
+        'tag' : tag_obj,
     }
 
     # The context returned by the question_list function, contains info about the questions
     question_context = question_list(request,
                          questions,
-                         mark_safe(_(u'questions tagged <span class="tag">%(tag)s</span>') % {'tag': tag}),
+                         mark_safe(_(u'questions tagged <span class="tag">%(tag)s</span>') % {'tag': tag_obj.name}),
                          None,
-                         mark_safe(_(u'Questions Tagged With %(tag)s') % {'tag': tag}),
+                         mark_safe(_(u'Questions Tagged With %(tag)s') % {'tag': tag_obj.name}),
                          False)
 
     # If the return data type is not a dict just return it
@@ -166,7 +175,11 @@ def tag(request, tag):
     # Create the combined context
     context = dict(question_context.items() + tag_context.items())
 
-    return context
+    result = render_response('questions.html', context, request, page_template='questions_page.html', parent_template="base.html")
+    if any(t.id < 0 for t in tag_objs):
+        # prevent search engines indexing these pages / link spam attacks
+        result.status_code = 418 # I'm a teapot
+    return result
 
 @decorators.render('questions.html', 'questions', tabbed=False)
 def user_questions(request, mode, user, slug):
