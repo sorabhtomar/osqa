@@ -48,6 +48,11 @@ label = _("Show user accept rate"),
 help_text = _("If you check this the user accept rate will be displayed on the user posts."),
 required=False))
 
+USE_USERS_QUESTIONS_FOR_ACCEPT_RATE = Setting('USE_USERS_QUESTIONS_FOR_ACCEPT_RATE', True, USERS_SET, dict(
+label = _("Calculate accept rate SO style"),
+help_text = _("Calculate rate as own questions with accepted answers / own questions"),
+required=False))
+
 FREEZE_ACCEPT_RATE_FOR = Setting('FREEZE_ACCEPT_RATE_FOR',
 ["admin",],
 USERS_SET, dict(
