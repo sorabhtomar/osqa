@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import strip_tags
 from forum.utils.html import sanitize_html
 from forum.utils.userlinking import auto_user_link
-from forum.settings import SUMMARY_LENGTH
+from forum.settings import SUMMARY_LENGTH, USE_NOFOLLOW_ON_USER_LINKS
 from utils import PickledObjectField
 
 class NodeContent(models.Model):
@@ -29,16 +29,21 @@ class NodeContent(models.Model):
         return self.body
 
     def rendered(self, content):
-        return auto_user_link(self, self._as_markdown(content, *['auto_linker']))
+        extensions = ['auto_linker']
+        if USE_NOFOLLOW_ON_USER_LINKS:
+            extensions.append('nofollow')
+        extension_configs = { 'spoiler_quote' : { 'extensions' : extensions[:] } }
+        extensions.append('spoiler_quote')
+        extensions.append('nl2br')
+        return auto_user_link(self, self._as_markdown(content, *extensions, **extension_configs))
 
     @classmethod
-    def _as_markdown(cls, content, *extensions):
+    def _as_markdown(cls, content, *extensions, **extension_configs):
         try:
-            return mark_safe(sanitize_html(markdown.markdown(content, extensions=extensions)))
-        except Exception, e:
-            import traceback
-            logging.error("Caught exception %s in markdown parser rendering %s %s:\s %s" % (
-                str(e), cls.__name__, str(e), traceback.format_exc()))
+            return mark_safe(sanitize_html(markdown.markdown(
+                content, extensions=extensions, extension_configs=extension_configs)))
+        except:
+            logging.exception("Caught exception in markdown parser rendering %s", cls.__name__)
             return ''
 
     def as_markdown(self, *extensions):
