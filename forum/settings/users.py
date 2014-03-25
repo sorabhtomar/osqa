@@ -116,3 +116,7 @@ widget=RadioSelect,
 choices=GRAVATAR_DEFAULT_CHOICES,
 required=False))
 
+USERS_CAN_GIVEAWAY_KARMA = Setting('USERS_CAN_GIVEAWAY_KARMA', True, USERS_SET, dict(
+label = _("Enable authenticated users to give away karma"),
+help_text = _("Superuser / staff can give karma regardless of this setting"),
+required=False))
