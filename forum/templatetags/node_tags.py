@@ -72,7 +72,7 @@ def post_classes(post):
         if (not settings.DISABLE_ACCEPTING_FEATURE) and post.nis.accepted:
             classes.append('accepted-answer')
 
-        if post.author == post.question.author:
+        if post.author_id == post.question.author_id:
             classes.append('answered-by-owner')
 
     return " ".join(classes)
