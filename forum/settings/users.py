@@ -116,3 +116,7 @@ widget=RadioSelect,
 choices=GRAVATAR_DEFAULT_CHOICES,
 required=False))
 
+REQUIRE_LOGIN_FOR_ASKING_QUESTION = Setting('REQUIRE_LOGIN_FOR_ASKING_QUESTION', False, USERS_SET, dict(
+label = _("Require users to log in before asking a question"),
+help_text = _("Require users to log in before asking a question"),
+required=False))
