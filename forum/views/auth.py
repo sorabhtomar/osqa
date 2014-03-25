@@ -317,6 +317,8 @@ def auth_settings(request, id):
 
     if not (request.user.is_superuser or request.user == user_):
         return HttpResponseUnauthorized(request)
+    if not settings.USERS_CAN_CHANGE_AUTH_SETTINGS:
+        return HttpResponseUnauthorized(request)
 
     auth_keys = user_.auth_keys.all()
 
