@@ -130,3 +130,8 @@ USERS_CAN_CHANGE_AUTH_SETTINGS = Setting('USERS_CAN_CHANGE_AUTH_SETTINGS', True,
 label = _("Enable users to change auth settings"),
 help_text = _("Enable users to access authentication settings (requires server restart to fully take effect)"),
 required=False))
+
+REQUIRE_LOGIN_FOR_ASKING_QUESTION = Setting('REQUIRE_LOGIN_FOR_ASKING_QUESTION', False, USERS_SET, dict(
+label = _("Require users to log in before asking a question"),
+help_text = _("Require users to log in before asking a question"),
+required=False))

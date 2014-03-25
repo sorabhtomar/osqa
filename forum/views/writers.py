@@ -20,7 +20,7 @@ from forum.models import *
 from forum.utils import html
 from forum.http_responses import HttpResponseUnauthorized
 
-from vars import PENDING_SUBMISSION_SESSION_ATTR
+from vars import PENDING_SUBMISSION_SESSION_ATTR, ON_SIGNIN_SESSION_ATTR
 
 @csrf_exempt
 def upload(request):#ajax upload file to a question or answer
@@ -72,6 +72,11 @@ def upload(request):#ajax upload file to a question or answer
 
 def ask(request):
     form = None
+
+    if not request.user.is_authenticated() and settings.REQUIRE_LOGIN_FOR_ASKING_QUESTION:
+        # make sure that we get back on the page once we're authenticated
+        request.session[ON_SIGNIN_SESSION_ATTR] = request.build_absolute_uri()
+        return HttpResponseRedirect(reverse('auth_signin'))
 
     if request.POST:
         if request.session.pop('reviewing_pending_data', False):
