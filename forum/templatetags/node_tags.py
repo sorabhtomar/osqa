@@ -116,7 +116,7 @@ def post_controls(post, user):
             edit_url = reverse('edit_' + post_type, kwargs={'id': post.id})
             if user.can_edit_post(post):
                 controls.append(post_control(_('edit'), edit_url))
-            elif post_type == 'question' and user.can_retag_questions():
+            elif post_type == 'question' and user.can_retag_questions(post):
                 controls.append(post_control(_('retag'), edit_url))
         except:
             pass

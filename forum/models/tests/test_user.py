@@ -79,7 +79,7 @@ class UserTest(TestCase):
     def test_can_edit_post(self):
         self.assert_(True)
 
-    def test_can_retag_questions(self):
+    def test_can_retag_questions(self, post):
         self.assert_(True)
 
     def test_can_close_question(self):
