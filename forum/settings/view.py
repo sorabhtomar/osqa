@@ -62,3 +62,6 @@ LIMIT_RELATED_TAGS = Setting('LIMIT_RELATED_TAGS', 0, VIEW_SET, dict(
 label = _("Limit related tags block"),
 help_text = _("Limit related tags block size in questions list pages. Set to 0 to display all all tags.")))
 
+DISPLAY_EMPTY_LIST_FOR_NONEXISTENT_TAGS = Setting('DISPLAY_EMPTY_LIST_FOR_NONEXISTENT_TAGS', False, VIEW_SET, dict(
+label = _("Display empty question list for nonexistent tags"), required=False,
+help_text = _("Display an empty question list (instead of an error page) for nonexistent tags")))
