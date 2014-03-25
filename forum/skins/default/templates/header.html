@@ -17,7 +17,7 @@
         {% loopregistry page_top_tabs %}{% spaceless %}
             <a id="nav_{{ tab_name }}"{% ifequal tab tab_name %} class="on"{% endifequal %} href="{{ tab_url }}" >{{ tab_title }}</a>
         {% endspaceless %}{% endloopregistry %}
-        <a id="nav_ask" href="{% url "ask" %}" class="special">{% trans "ask a question" %}</a>
+        <a id="nav_ask" href="{% url ask %}{% if settings.AUTO_SET_TAG_ON_QUESTION and tag %}?tag={{ tag }}{% endif %}" class="special">{% trans "ask a question" %}</a>
     </div>
   </div>
 
