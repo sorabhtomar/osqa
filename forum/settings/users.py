@@ -126,6 +126,16 @@ widget=RadioSelect,
 choices=GRAVATAR_DEFAULT_CHOICES,
 required=False))
 
+USERS_CAN_GIVEAWAY_KARMA = Setting('USERS_CAN_GIVEAWAY_KARMA', True, USERS_SET, dict(
+label = _("Enable authenticated users to give away karma"),
+help_text = _("Superuser / staff can give karma regardless of this setting"),
+required=False))
+
+USERS_CAN_OPEN_CLOSE_QUESTIONS = Setting('USERS_CAN_OPEN_CLOSE_QUESTIONS', True, USERS_SET, dict(
+label = _("Enable authenticated users open/close questions"),
+help_text = _("Superuser / staff can open/close questions regardless of this setting. Reputation limit is also taken into account."),
+required=False))
+
 USERS_CAN_CHANGE_AUTH_SETTINGS = Setting('USERS_CAN_CHANGE_AUTH_SETTINGS', True, USERS_SET, dict(
 label = _("Enable users to change auth settings"),
 help_text = _("Enable users to access authentication settings (requires server restart to fully take effect)"),
@@ -134,9 +144,4 @@ required=False))
 REQUIRE_LOGIN_FOR_ASKING_QUESTION = Setting('REQUIRE_LOGIN_FOR_ASKING_QUESTION', False, USERS_SET, dict(
 label = _("Require users to log in before asking a question"),
 help_text = _("Require users to log in before asking a question"),
-required=False))
-
-USERS_CAN_OPEN_CLOSE_QUESTIONS = Setting('USERS_CAN_OPEN_CLOSE_QUESTIONS', True, USERS_SET, dict(
-label = _("Enable authenticated users open/close questions"),
-help_text = _("Superuser / staff can open/close questions regardless of this setting. Reputation limit is also taken into account."),
 required=False))

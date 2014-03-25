@@ -104,8 +104,9 @@ def post_controls(post, user):
         controls.append(post_control(_('permanent link'), reverse('answer_permanent_link', kwargs={'id' : post.id,}),
                                      title=_("answer permanent link"), command=True, withprompt=True, copy=True))
 
-        # Users should be able to award points for an answer. Users cannot award their own answers
-        if user != post.author and user.is_authenticated() and user.reputation > 1:
+        give_karma_enabled = user.is_superuser or user.is_staff or \
+            (settings.USERS_CAN_GIVEAWAY_KARMA and user != post.author and user.is_authenticated())
+        if give_karma_enabled:
             controls.append(post_control(_("award points"), reverse('award_points', kwargs={'user_id' : post.author.id,
                                          'answer_id' : post.id}), title=_("award points to %s") % smart_unicode(post.author.username),
                                          command=True, withprompt=True))
