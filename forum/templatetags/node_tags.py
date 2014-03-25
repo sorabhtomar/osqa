@@ -122,9 +122,10 @@ def post_controls(post, user):
             pass
 
         if post_type == 'question':
-            if post.nis.closed and user.can_reopen_question(post):
+            open_close_enabled = user.is_superuser or user.is_staff or settings.USERS_CAN_OPEN_CLOSE_QUESTIONS
+            if open_close_enabled and post.nis.closed and user.can_reopen_question(post):
                 controls.append(post_control(_('reopen'), reverse('reopen', kwargs={'id': post.id}), command=True))
-            elif not post.nis.closed and user.can_close_question(post):
+            elif open_close_enabled and not post.nis.closed and user.can_close_question(post):
                 controls.append(post_control(_('close'), reverse('close', kwargs={'id': post.id}), command=True, withprompt=True))
 
         if user.can_flag_offensive(post):

@@ -116,3 +116,7 @@ widget=RadioSelect,
 choices=GRAVATAR_DEFAULT_CHOICES,
 required=False))
 
+USERS_CAN_OPEN_CLOSE_QUESTIONS = Setting('USERS_CAN_OPEN_CLOSE_QUESTIONS', True, USERS_SET, dict(
+label = _("Enable authenticated users open/close questions"),
+help_text = _("Superuser / staff can open/close questions regardless of this setting. Reputation limit is also taken into account."),
+required=False))
