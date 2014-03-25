@@ -1,4 +1,3 @@
-from os import linesep
 from csv import reader, QUOTE_NONE
 import markdown
 from markdown import Extension

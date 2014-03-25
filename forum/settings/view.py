@@ -62,3 +62,6 @@ LIMIT_RELATED_TAGS = Setting('LIMIT_RELATED_TAGS', 0, VIEW_SET, dict(
 label = _("Limit related tags block"),
 help_text = _("Limit related tags block size in questions list pages. Set to 0 to display all all tags.")))
 
+USE_NOFOLLOW_ON_USER_LINKS = Setting('USE_NOFOLLOW_ON_USER_LINKS', False, VIEW_SET, dict(
+label = _("Set nofollow on links in questions/answers"), required=False,
+help_text = _("Set the nofollow attribute on links in questions/answers (only applies for new/edited questions/answers)")))
