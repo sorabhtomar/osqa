@@ -182,8 +182,7 @@ def _retag_question(request, question):
         #'tags' : _get_tags_cache_json(),
     }, context_instance=RequestContext(request))
 
-def _edit_question(request, question, template='question_edit.html', summary='', action_class=ReviseAction,
-                   allow_rollback=True, url_getter=lambda q: q.get_absolute_url(), additional_context=None):
+def _edit_question(request, question, template='question_edit.html', summary='', action_class=ReviseAction, allow_rollback=True, url_getter=lambda q: q.get_absolute_url()):
     if request.method == 'POST':
         revision_form, form, revision = _get_edit_question_forms_from_postdata(request, question)
 
@@ -213,9 +212,6 @@ def _edit_question(request, question, template='question_edit.html', summary='',
         'revision_form': revision_form,
         'form' : form,
     }
-
-    if not (additional_context is None):
-        context.update(additional_context)
 
     return render_to_response(template, context, context_instance=RequestContext(request))
 
