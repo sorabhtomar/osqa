@@ -110,9 +110,10 @@ def ask(request):
                         return HttpResponseRedirect(reverse('auth_signin'))
         elif "go" in request.POST:
             form = AskForm({'title': request.POST['q']}, user=request.user)
-            
+
+    default_tags = request.GET.get('tag', '').split()
     if not form:
-        form = AskForm(user=request.user)
+        form = AskForm(user=request.user, default_tags=default_tags)
 
     return render_to_response('ask.html', {
         'form' : form,
