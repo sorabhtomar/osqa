@@ -196,7 +196,7 @@ def media(url):
 
 @register.simple_tag
 def get_tag_font_size(tag):
-    occurrences_of_current_tag = tag.used_count
+    occurrences_of_current_tag = 1 + tag.used_count
 
     # Occurrences count settings
     min_occurs = int(settings.TAGS_CLOUD_MIN_OCCURS)
@@ -207,8 +207,8 @@ def get_tag_font_size(tag):
     max_font_size = int(settings.TAGS_CLOUD_MAX_FONT_SIZE)
 
     # Calculate the font size of the tag according to the occurrences count
-    weight = (math.log(occurrences_of_current_tag)-math.log(min_occurs))/(math.log(max_occurs)-math.log(min_occurs))
-    font_size_of_current_tag = min_font_size + int(math.floor((max_font_size-min_font_size)*weight))
+    weight = (math.log(occurrences_of_current_tag) - math.log(min_occurs)) / (math.log(max_occurs) - math.log(min_occurs))
+    font_size_of_current_tag = min_font_size + int(math.floor((max_font_size - min_font_size) * weight))
 
     return font_size_of_current_tag
 
