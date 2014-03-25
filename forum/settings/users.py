@@ -116,3 +116,7 @@ widget=RadioSelect,
 choices=GRAVATAR_DEFAULT_CHOICES,
 required=False))
 
+USERS_CAN_CHANGE_AUTH_SETTINGS = Setting('USERS_CAN_CHANGE_AUTH_SETTINGS', True, USERS_SET, dict(
+label = _("Enable users to change auth settings"),
+help_text = _("Enable users to access authentication settings (requires server restart to fully take effect)"),
+required=False))

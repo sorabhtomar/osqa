@@ -45,6 +45,7 @@ Visibility.STAFF = Visibility('staff')
 Visibility.SUPERUSER = Visibility('superuser')
 Visibility.OWNER = Visibility('owner')
 Visibility.REPUTED = lambda r: Visibility(r)
+Visibility.NOBODY = Visibility('public', negated=True)
 
 
 class Url(object):
