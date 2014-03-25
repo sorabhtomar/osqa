@@ -135,3 +135,8 @@ REQUIRE_LOGIN_FOR_ASKING_QUESTION = Setting('REQUIRE_LOGIN_FOR_ASKING_QUESTION',
 label = _("Require users to log in before asking a question"),
 help_text = _("Require users to log in before asking a question"),
 required=False))
+
+USERS_CAN_OPEN_CLOSE_QUESTIONS = Setting('USERS_CAN_OPEN_CLOSE_QUESTIONS', True, USERS_SET, dict(
+label = _("Enable authenticated users open/close questions"),
+help_text = _("Superuser / staff can open/close questions regardless of this setting. Reputation limit is also taken into account."),
+required=False))
