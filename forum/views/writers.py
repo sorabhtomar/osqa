@@ -19,7 +19,7 @@ from forum.models import *
 from forum.utils import html
 from forum.http_responses import HttpResponseUnauthorized
 
-from vars import PENDING_SUBMISSION_SESSION_ATTR
+from vars import PENDING_SUBMISSION_SESSION_ATTR, ON_SIGNIN_SESSION_ATTR
 
 @csrf_exempt
 def upload(request):#ajax upload file to a question or answer
@@ -72,6 +72,11 @@ def upload(request):#ajax upload file to a question or answer
 def ask(request):
     form = None
 
+    if not request.user.is_authenticated() and settings.REQUIRE_LOGIN_FOR_ASKING_QUESTION:
+        # make sure that we get back on the page once we're authenticated
+        request.session[ON_SIGNIN_SESSION_ATTR] = request.build_absolute_uri()
+        return HttpResponseRedirect(reverse('auth_signin'))
+
     if request.POST:
         if request.session.pop('reviewing_pending_data', False):
             form = AskForm(initial=request.POST, user=request.user)
@@ -97,16 +102,17 @@ def ask(request):
 
                     if request.user.is_authenticated():
                         messages.info(request, _("Your question is pending until you %s.") % html.hyperlink(
-                            reverse('send_validation_email'), _("validate your email")
+                            django_settings.APP_URL + reverse('send_validation_email', prefix='/'), _("validate your email")
                         ))
                         return HttpResponseRedirect(reverse('index'))
                     else:
                         return HttpResponseRedirect(reverse('auth_signin'))
         elif "go" in request.POST:
             form = AskForm({'title': request.POST['q']}, user=request.user)
-            
+
+    default_tags = request.GET.get('tag', '').split()
     if not form:
-        form = AskForm(user=request.user)
+        form = AskForm(user=request.user, default_tags=default_tags)
 
     return render_to_response('ask.html', {
         'form' : form,
@@ -283,7 +289,7 @@ def answer(request, id):
 
             if request.user.is_authenticated():
                 messages.info(request, _("Your answer is pending until you %s.") % html.hyperlink(
-                    reverse('send_validation_email'), _("validate your email")
+                    django_settings.APP_URL + reverse('send_validation_email', prefix='/'), _("validate your email")
                 ))
                 return HttpResponseRedirect(question.get_absolute_url())
             else:

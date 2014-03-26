@@ -89,7 +89,7 @@ def prepare_provider_signin(request, provider):
 
         try:
             request_url = provider_class.prepare_authentication_request(request,
-                                                                        reverse('auth_provider_done',
+                                                                        reverse('auth_provider_done', prefix='/',
                                                                                 kwargs={'provider': provider}))
 
             return HttpResponseRedirect(request_url)
@@ -316,6 +316,8 @@ def auth_settings(request, id):
     user_ = get_object_or_404(User, id=id)
 
     if not (request.user.is_superuser or request.user == user_):
+        return HttpResponseUnauthorized(request)
+    if not settings.USERS_CAN_CHANGE_AUTH_SETTINGS:
         return HttpResponseUnauthorized(request)
 
     auth_keys = user_.auth_keys.all()

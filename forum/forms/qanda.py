@@ -72,7 +72,7 @@ class AnswerEditorField(EditorField):
 
 
 class TagNamesField(forms.CharField):
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, user=None, initial='', *args, **kwargs):
         super(TagNamesField, self).__init__(*args, **kwargs)
 
         self.required = True
@@ -83,7 +83,7 @@ class TagNamesField(forms.CharField):
         self.help_text = _('Tags are short keywords, with no spaces within. At least %(min)s and up to %(max)s tags can be used.') % {
             'min': settings.FORM_MIN_NUMBER_OF_TAGS, 'max': settings.FORM_MAX_NUMBER_OF_TAGS    
         }
-        self.initial = ''
+        self.initial = initial
         self.user = user
 
     def clean(self, value):
@@ -198,11 +198,12 @@ class AskForm(forms.Form):
     title  = TitleField()
     text   = QuestionEditorField()
 
-    def __init__(self, data=None, user=None, *args, **kwargs):
+    def __init__(self, data=None, user=None, default_tags=None, *args, **kwargs):
         super(AskForm, self).__init__(data, *args, **kwargs)
 
-        self.fields['tags']   = TagNamesField(user)
-        
+        initial = ' '.join(default_tags) if default_tags else ''
+        self.fields['tags'] = TagNamesField(user, initial=initial)
+
         if not user.is_authenticated() or (int(user.reputation) < settings.CAPTCHA_IF_REP_LESS_THAN and not (user.is_superuser or user.is_staff)):
             spam_fields = call_all_handlers('create_anti_spam_field')
             if spam_fields:

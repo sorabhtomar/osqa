@@ -72,7 +72,7 @@ def post_classes(post):
         if (not settings.DISABLE_ACCEPTING_FEATURE) and post.nis.accepted:
             classes.append('accepted-answer')
 
-        if post.author == post.question.author:
+        if post.author_id == post.question.author_id:
             classes.append('answered-by-owner')
 
     return " ".join(classes)
@@ -104,8 +104,9 @@ def post_controls(post, user):
         controls.append(post_control(_('permanent link'), reverse('answer_permanent_link', kwargs={'id' : post.id,}),
                                      title=_("answer permanent link"), command=True, withprompt=True, copy=True))
 
-        # Users should be able to award points for an answer. Users cannot award their own answers
-        if user != post.author and user.is_authenticated() and user.reputation > 1:
+        give_karma_enabled = user.is_superuser or user.is_staff or \
+            (settings.USERS_CAN_GIVEAWAY_KARMA and user != post.author and user.is_authenticated())
+        if give_karma_enabled:
             controls.append(post_control(_("award points"), reverse('award_points', kwargs={'user_id' : post.author.id,
                                          'answer_id' : post.id}), title=_("award points to %s") % smart_unicode(post.author.username),
                                          command=True, withprompt=True))
@@ -116,15 +117,16 @@ def post_controls(post, user):
             edit_url = reverse('edit_' + post_type, kwargs={'id': post.id})
             if user.can_edit_post(post):
                 controls.append(post_control(_('edit'), edit_url))
-            elif post_type == 'question' and user.can_retag_questions():
+            elif post_type == 'question' and user.can_retag_questions(post):
                 controls.append(post_control(_('retag'), edit_url))
         except:
             pass
 
         if post_type == 'question':
-            if post.nis.closed and user.can_reopen_question(post):
+            open_close_enabled = user.is_superuser or user.is_staff or settings.USERS_CAN_OPEN_CLOSE_QUESTIONS
+            if open_close_enabled and post.nis.closed and user.can_reopen_question(post):
                 controls.append(post_control(_('reopen'), reverse('reopen', kwargs={'id': post.id}), command=True))
-            elif not post.nis.closed and user.can_close_question(post):
+            elif open_close_enabled and not post.nis.closed and user.can_close_question(post):
                 controls.append(post_control(_('close'), reverse('close', kwargs={'id': post.id}), command=True, withprompt=True))
 
         if user.can_flag_offensive(post):
