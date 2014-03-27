@@ -31,7 +31,7 @@ ui.register(ui.HEADER_LINKS,
                     weight=200, name='LOGIN'),
             ui.Link(
                     visibility=ui.Visibility.AUTHENTICATED,
-                    text=_('login'),
+                    text=_('logout'),
                     url=lambda u, c: reverse('logout'),
                     weight=200, name='LOGOUT'),
             ui.Link(
