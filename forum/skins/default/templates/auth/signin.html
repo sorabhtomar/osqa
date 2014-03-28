@@ -6,7 +6,7 @@
 {% block title %}{% spaceless %}{% trans "Login" %}{% endspaceless %}{% endblock %}
 
 {% block forejs %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% media "/media/style/auth.css" %}"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static "style/auth.css" %}"/>
     {% for provider in all_providers %}
         {% for location in provider.extra_css %}
             <link rel="stylesheet" type="text/css" media="screen" href="{{ location }}"/>
@@ -54,14 +54,14 @@
                 <div class="inner">
                     {% ifequal provider.type "DIRECT" %}
                         <a class="provider_direct" href="{% url "auth_provider_signin" provider=provider.id %}">
-                            <img src="{% media provider.icon %}" />
+                            <img src="{% static provider.icon %}" />
                         </a>
                     {% endifequal %}
                     {% ifequal provider.type "CUSTOM" %}
                         {% include provider.code_template %}
                     {% endifequal %}
                     {% ifequal provider.type "SIMPLE_FORM" %}
-                        <img alt="{{ provider.simple_form_context.your_what }}" class="simple_form_provider" src="{% media provider.icon %}" />
+                        <img alt="{{ provider.simple_form_context.your_what }}" class="simple_form_provider" src="{% static provider.icon %}" />
                     {% endifequal %}
                 </div>
             </div>
@@ -73,14 +73,14 @@
                 <div class="inner">
                     {% ifequal provider.type "DIRECT" %}
                         <a class="provider_direct" href="{% url "auth_provider_signin" provider=provider.id %}">
-                            <img src="{% media provider.icon %}" />
+                            <img src="{% static provider.icon %}" />
                         </a>
                     {% endifequal %}
                     {% ifequal provider.type "CUSTOM" %}
                         {% include provider.code_template %}
                     {% endifequal %}
                     {% ifequal provider.type "SIMPLE_FORM" %}
-                        <img alt="{{ provider.simple_form_context.your_what }}" class="simple_form_provider" src="{% media provider.icon %}" />
+                        <img alt="{{ provider.simple_form_context.your_what }}" class="simple_form_provider" src="{% static provider.icon %}" />
                     {% endifequal %}
                 </div>
             </div>

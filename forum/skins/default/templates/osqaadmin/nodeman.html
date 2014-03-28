@@ -358,7 +358,7 @@
                 <ul>
                     {% for u in authors %}
                         <li class="selected">
-                            <img class="author-filter-remover" rel="{{ u.id }}" src="{% media "/media/images/close-small-dark.png" %}">
+                            <img class="author-filter-remover" rel="{{ u.id }}" src="{% static "images/close-small-dark.png" %}">
                             {{ u.decorated_name }} ({{ u.reputation }})
                         </li>
                     {% endfor %}
@@ -374,7 +374,7 @@
                 <ul>
                     {% for t in tags %}
                         <li class="selected">
-                            <img class="tag-filter-remover" rel="{{ t.id }}" src="{% media "/media/images/close-small-dark.png" %}">
+                            <img class="tag-filter-remover" rel="{{ t.id }}" src="{% static "images/close-small-dark.png" %}">
                             {{ t.name }} ({{ t.used_count }})
                         </li>
                     {% endfor %}

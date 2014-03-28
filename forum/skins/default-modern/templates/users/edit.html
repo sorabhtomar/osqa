@@ -3,9 +3,10 @@
 {% load extra_tags %}
 {% load humanize %}
 {% load i18n %}
+{% load staticfiles %}
 {% block title %}{% spaceless %}{% trans "Edit user profile" %}{% endspaceless %}{% endblock %}
 {% block forejs %}
-        <link rel="stylesheet" href="{% media "/media/style/demo-docs-theme.css" %}" type="text/css" media="all" />
+        <link rel="stylesheet" href="{% static "style/demo-docs-theme.css" %}" type="text/css" media="all" />
 
         <script type="text/javascript">
             $().ready(function(){
@@ -34,7 +35,7 @@
             {% if user.email %}
             {% gravatar user 128 %}
             {% else %}
-            <img src="{% media  "/media/images/nophoto.png" %}">
+            <img src="{% static "images/nophoto.png" %}">
             {% endif %}
             <div style="padding:20px 0 0 20px;font-weight:bold;font-size:150%">
                 <a href="http://www.gravatar.com/" target="_blank" 

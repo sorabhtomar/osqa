@@ -187,7 +187,6 @@ def urlname(name):
 urlpatterns += patterns('', *core_defined)
 
 if djsettings.DEBUG:
-    urlpatterns += static(djsettings.STATIC_URL, document_root=djsettings.STATIC_ROOT)
-    upload_dir = os.path.join(APP_PATH, 'upfiles').replace('\\', '/')
+    upload_dir = os.path.join(djsettings.STATIC_ROOT, '..', 'upfiles').replace('\\', '/')
     urlpatterns += static(r'^%s(?P<path>.*)$' % _('upfiles/'), document_root=upload_dir)
 

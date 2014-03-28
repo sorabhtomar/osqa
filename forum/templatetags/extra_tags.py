@@ -15,7 +15,6 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import ungettext
 from forum import settings
 from django.template.defaulttags import url as default_url
-from forum import skins
 from forum.utils import html
 from extra_filters import decorated_int
 from django.core.urlresolvers import reverse
@@ -181,20 +180,6 @@ def diff_date(date, limen=2):
         return ungettext('%(sec)d ' + _("sec ago"), '%(sec)d ' + _("secs ago"), diff.seconds) % {'sec':diff.seconds}
 
 @register.simple_tag
-def media(url):
-    url = skins.find_media_source(url)
-    if url:
-        # Create the URL prefix.
-        url_prefix = settings.FORCE_SCRIPT_NAME + '/m/'
-
-        # Make sure any duplicate forward slashes are replaced with a single
-        # forward slash.
-        url_prefix = re.sub("/+", "/", url_prefix)
-
-        url = url_prefix + url
-        return url
-
-@register.simple_tag
 def get_tag_font_size(tag):
     occurrences_of_current_tag = 1 + tag.used_count
 
@@ -223,45 +208,6 @@ class ItemSeparatorNode(template.Node):
 
     def render(self, context):
         return self.content
-
-class BlockMediaUrlNode(template.Node):
-    def __init__(self, nodelist):
-        self.items = nodelist
-
-    def render(self, context):
-        prefix = settings.APP_URL + 'm/'
-        url = ''
-        if self.items:
-            url += '/'
-        for item in self.items:
-            url += item.render(context)
-
-        url = skins.find_media_source(url)
-        url = prefix + url
-        out = url
-        return out.replace(' ', '')
-
-@register.tag(name='blockmedia')
-def blockmedia(parser, token):
-    try:
-        tagname = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError("blockmedia tag does not use arguments")
-    nodelist = []
-    while True:
-        nodelist.append(parser.parse(('endblockmedia')))
-        next = parser.next_token()
-        if next.contents == 'endblockmedia':
-            break
-    return BlockMediaUrlNode(nodelist)
-
-
-@register.simple_tag
-def fullmedia(url):
-    domain = settings.APP_BASE_URL
-    #protocol = getattr(settings, "PROTOCOL", "http")
-    path = media(url)
-    return "%s%s" % (domain, path)
 
 
 class SimpleVarNode(template.Node):

@@ -1,6 +1,6 @@
 {% extends parent_template %}
 <!-- template 404.html -->
-{% load i18n %}
+{% load i18n staticfiles %}
 {% block title %}{% trans "404 Error" %}{% endblock %}
 {% block forestyle%}
     <style type="text/css">
@@ -36,7 +36,7 @@
             var GOOG_FIXURL_SITE = '{{site_url}}';
         </script>
         <!-- Script from http://linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js - CDN cannot be used due to lack of reliable https support -->
-        <script type="text/javascript" src="{% media "/media/js/fixurl.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/fixurl.js" %}"></script>
         <ul>
             <li><a href="#" id="linkPrevious">{% trans "back to previous page" %} &raquo;</a></li>
             <li><a href="{% url "questions" %}">{% trans "see all questions" %} &raquo;</a></li>

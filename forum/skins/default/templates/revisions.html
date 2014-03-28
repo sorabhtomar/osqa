@@ -4,6 +4,7 @@
 {% load i18n %}
 {% load extra_filters %}
 {% load humanize %}
+{% load staticfiles %}
 {% block title %}{% spaceless %}{% trans "Revision history" %}{% endspaceless %}{% endblock %}
 {% block forejs %}
     <script type="text/javascript">
@@ -23,10 +24,10 @@
             var rev_arrow = $('img#rev-arrow-' + id).get(0);
             if (rev_body.style.display == "none") {
                 rev_body.style.display = "";
-                rev_arrow.src="{% media  "/media/images/expander-arrow-hide.gif" %}"
+                rev_arrow.src="{% static "images/expander-arrow-hide.gif" %}"
             } else {
                 rev_body.style.display = "none";
-                rev_arrow.src="{% media  "/media/images/expander-arrow-show.gif" %}"
+                rev_arrow.src="{% static "images/expander-arrow-show.gif" %}"
             }
         }
         
@@ -48,7 +49,7 @@
                     <td width="20" style="vertical-align:middle"><img id="rev-arrow-{{ revision.inst.revision }}"
                                                                       class="rev-arrow"
                                                                       onclick="toggleRev({{ revision.inst.revision }})"
-                                                                      src="{% media  "/media/images/expander-arrow-show.gif" %}"
+                                                                      src="{% static "images/expander-arrow-show.gif" %}"
                                                                       alt="{% trans "click to hide/show revision" %}"/>
                     </td>
                     <td width="30px" style="vertical-align:middle"><span class="revision-number" title="{% trans "revision" %} {{ revision.inst.revision }}">{{ revision.inst.revision }}</span></td>

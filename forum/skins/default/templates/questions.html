@@ -3,6 +3,7 @@
 {% load question_list_tags %}
 {% load i18n %}
 {% load extra_tags %}
+{% load staticfiles %}
 {% load general_sidebar_tags %}
 
 {% block title %}{% spaceless %}{{ page_title }}{% endspaceless %}{% endblock %}
@@ -23,7 +24,7 @@
 
 <div class="tabBar">
     {% include "question_list/title.html" %}
-    <a class="feed-icon" style="background-image:url('{% media "media/images/feed-icon-small.png" %}');" href="{{ feed_url }}" title="{% trans "subscribe to question RSS feed" %}"></a>
+    <a class="feed-icon" style="background-image:url('{% static "images/feed-icon-small.png" %}');" href="{{ feed_url }}" title="{% trans "subscribe to question RSS feed" %}"></a>
     {{ questions.paginator.sort_tabs }}
 </div>
 <div id="listA">{% for question in questions.paginator.page %}

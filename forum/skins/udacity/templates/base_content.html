@@ -22,13 +22,13 @@
         {% endif %}
         <link rel="shortcut icon" href="{{ settings.APP_FAVICON }}" />
         {% if settings.CSS_SPRITES %}
-        <link href="{% media "/media/style/style-sprite.css" %}" rel="stylesheet" type="text/css" />
+        <link href="{% static "style/style-sprite.css" %}" rel="stylesheet" type="text/css" />
         {% else %}
-        <link href="{% media "/media/style/style.css" %}" rel="stylesheet" type="text/css" />
+        <link href="{% static "style/style.css" %}" rel="stylesheet" type="text/css" />
         {% endif %}
 
         <link href="https://www.udacity.com/media/css/udacity/udacity.min.css" rel="stylesheet" type="text/css" />
-        <link href="{% media "/media/style/udacity.css" %}" rel="stylesheet" type="text/css" />
+        <link href="{% static "style/udacity.css" %}" rel="stylesheet" type="text/css" />
         
         <!--[if lt IE 9]>
             <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -54,7 +54,7 @@
         {% endif %}
         <!--[if IE 6]>
         <style type="text/css">
-        img, div, a { behavior: url({% media "/media/iepngfix/iepngfix.htc" %}) }
+        img, div, a { behavior: url({% static "iepngfix/iepngfix.htc" %}) }
         </style>
         <![endif]-->
         {% block forestyle %}{% endblock %}
@@ -64,11 +64,11 @@
         {% if settings.CDN_ON %}
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery{{settings.MINIFIED_RESOURCES|yesno:".min,"}}.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui{{settings.MINIFIED_RESOURCES|yesno:".min,"}}.js"></script>
-        <script src="{% media "/media/js/jquery.waypoints-1.1.5.js" %}"></script>
+        <script src="{% static "js/jquery.waypoints-1.1.5.js" %}"></script>
         {% else %}
-        <script src="{% media "/media/js/jquery-1.7.1-ui-1.8.18-waypoints-1.1.5-combo.js" %}" type="text/javascript"></script>
+        <script src="{% static "js/jquery-1.7.1-ui-1.8.18-waypoints-1.1.5-combo.js" %}" type="text/javascript"></script>
         {% endif %}
-        <script src="{% media "/media/js/bootstrap-dropdown.js" %}" type="text/javascript"></script>
+        <script src="{% static "js/bootstrap-dropdown.js" %}" type="text/javascript"></script>
 
 
         <script type="text/javascript">
@@ -93,7 +93,7 @@
                 characters: "{% trans "characters" %}"
             }
         </script>
-        <script type="text/javascript" src="{% media "/media/js/osqa.main.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/osqa.main.js" %}"></script>
         {% if settings.MATHJAX_ENABLED %}
         <script type="text/x-mathjax-config">
            MathJax.Hub.Config({
@@ -114,7 +114,7 @@
         {% include "base_onready.html" %}
 
         {% if settings.ENDLESS_PAGINATION %}
-        <script type="text/javascript" src="{% media "/media/js/jquery.pjax-8df345b0e7.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/jquery.pjax-8df345b0e7.js" %}"></script>
         <script type="text/javascript">
             $(function(){
                 $.pjax.defaults.timeout = {{ settings.PJAX_TIMEOUT|default:1500 }};

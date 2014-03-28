@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!-- base_content.html -->
-{% load i18n extra_tags extra_filters ui_registry %}
+{% load i18n extra_tags extra_filters ui_registry staticfiles %}
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>{% block after_head_js %}{% endblock %}
         <title>{% block fulltitle %}{% block title %}{% endblock %} - {{ settings.APP_SHORT_NAME }}{% endblock %}</title>
@@ -12,14 +12,14 @@
         <meta name="google-site-verification" content="{{ settings.GOOGLE_SITEMAP_CODE }}" />
         {% endif %}
         <link rel="shortcut icon" href="{{ settings.APP_FAVICON }}" />
-        <link href="{% media  "/media/style/style.css" %}" rel="stylesheet" type="text/css" />
+        <link href="{% static "style/style.css" %}" rel="stylesheet" type="text/css" />
         {% if settings.USE_CUSTOM_CSS|or_preview:request %}
         <link href="{% url "custom_css" %}" rel="stylesheet" type="text/css" />
         {% endif %}
         <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" />
         <!--[if IE 6]>
         <style type="text/css">
-        img, div, a { behavior: url({% media "/media/iepngfix/iepngfix.htc" %}) }
+        img, div, a { behavior: url({% static "iepngfix/iepngfix.htc" %}) }
         </style>
         <![endif]-->
         {% block forestyle %}{% endblock %}
@@ -52,7 +52,7 @@
             }
         /*]]>*/
         </script>
-        <script type="text/javascript" src="{% media  "/media/js/osqa.main.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/osqa.main.js" %}"></script>
         {% if user_messages %}
         <style type="text/css">
             body { margin-top:2.4em; }
@@ -81,8 +81,8 @@
             <script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         {% endifequal %}
         {% ifequal settings.LATEX_SUPPORT|or_preview:request "mathquill" %}
-            <link rel="stylesheet" type="text/css" href="{% media "/media/mathquill/mathquill.css" %}">
-            <script type="text/javascript" src="{% media "/media/mathquill/mathquill.min.js" %}"></script>
+            <link rel="stylesheet" type="text/css" href="{% static "mathquill/mathquill.css" %}">
+            <script type="text/javascript" src="{% static "mathquill/mathquill.min.js" %}"></script>
         {% endifequal %}
         {% if settings.USE_CUSTOM_HEAD|or_preview:request %}
             {{ settings.CUSTOM_HEAD|or_preview:request|safe }}

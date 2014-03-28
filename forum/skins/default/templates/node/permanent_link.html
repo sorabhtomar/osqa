@@ -1,4 +1,4 @@
-{% load i18n extra_tags %}
+{% load i18n staticfiles %}
 
 <p>
 {% blocktrans %}
@@ -11,7 +11,7 @@ Would you like to copy the permanent link to your clipboard?
 <p><textarea id="permanent_link_url" name="permanent_link_url" style="font-size: 12px;" readonly="readonly">{{ url }}</textarea></p>
 {% endspaceless %}
 
-<script type="text/javascript" src="{% media  "/media/js/ZeroClipboard.js" %}"></script>
+<script type="text/javascript" src="{% static "js/ZeroClipboard.js" %}"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     // We highlight the content of the text field on click event
@@ -20,7 +20,7 @@ $(document).ready(function() {
     });
 
     // We use ZeroClipboard to copy the URL
-    ZeroClipboard.setMoviePath('{% media '/media/js/ZeroClipboard.swf' %}');
+    ZeroClipboard.setMoviePath('{% static 'js/ZeroClipboard.swf' %}');
 
     // Create the Client Clip
     var clip = new ZeroClipboard.Client();

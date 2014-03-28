@@ -1,7 +1,6 @@
 # encoding:utf-8
 import os.path
 import sys
-from django.utils import _os
 
 SITE_ID = 1
 
@@ -38,8 +37,17 @@ SKINDIR = os.path.join(BASEDIR, 'forum', 'skins')
 ROOT_URLCONF = 'urls'
 APPEND_SLASH = True
 
+STATIC_URL = '/m/'
+STATIC_ROOT = os.path.join(BASEDIR, 'static', 'public').replace('\\','/')
+STATICFILES_FINDERS = (
+    'forum.skins.ModulesTemplateFinder',
+    'forum.skins.SkinsMediaFinder',
+    'forum.skins.SkinsTemplateFinder',
+)
+STATICFILES_STORAGE = 'forum.skins.TemplateSeparatorStorage'
+
 TEMPLATE_DIRS = (
-    SKINDIR.replace('\\','/'),
+    os.path.join(STATIC_ROOT, '..', 'templates'),
 )
 
 
@@ -55,45 +63,12 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-STATIC_URL = '/m/'
-STATIC_ROOT = os.path.join(BASEDIR, 'static').replace('\\','/')
-
 # User settings
 from settings_local import *
-
-def _list_possible_dirs(include_common=False):
-    DEFAULT_SKIN_NAME = 'default'
-    result = [_os.safe_join(SKINDIR, OSQA_SKIN)]
-
-    skin_name = OSQA_SKIN
-    while True:
-        parent_txt = _os.safe_join(SKINDIR, skin_name, 'parent.txt')
-        if not os.path.isfile(parent_txt):
-            break
-        with open(parent_txt, 'rb') as fp:
-            skin_name = fp.readline().decode(FILE_CHARSET).strip()
-        p = _os.safe_join(SKINDIR, skin_name)
-        if not path.isdir(p):
-            break
-        result.append(p)
-
-    if OSQA_SKIN != DEFAULT_SKIN_NAME:
-        result.append(_os.safe_join(SKINDIR, DEFAULT_SKIN_NAME))
-    if include_common:
-        result.append(_os.safe_join(SKINDIR, 'common'))
-    return result
-
-STATICFILES_DIRS = [
-    ('templates', os.path.join(skin, 'templates')) for skin in _list_possible_dirs()
-] + [
-    ('public', os.path.join(skin, 'media')) for skin in _list_possible_dirs(include_common=True)
-]
 
 template_loaders = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    'forum.modules.template_loader.ModulesTemplateLoader',
-    'forum.skins.SkinsTemplateLoader',
 )
 TEMPLATE_LOADERS = list(template_loaders) if DEBUG else [ ('django.template.loaders.cached.Loader', template_loaders) ]
 
@@ -124,19 +99,10 @@ MODULES_FOLDER = os.path.join(SITE_SRC_ROOT, MODULES_PACKAGE)
 MODULE_LIST = filter(lambda m: getattr(m, 'CAN_USE', True), [
         __import__('forum_modules.%s' % f, globals(), locals(), ['forum_modules'])
         for f in os.listdir(MODULES_FOLDER)
-        if os.path.isdir(os.path.join(MODULES_FOLDER, f)) and
-           os.path.exists(os.path.join(MODULES_FOLDER, "%s/__init__.py" % f)) and
-           not f in DISABLED_MODULES
+        if os.path.isdir(os.path.join(MODULES_FOLDER, f))
+            and os.path.exists(os.path.join(MODULES_FOLDER, "%s/__init__.py" % f))
+            and f not in DISABLED_MODULES
 ])
-
-[MIDDLEWARE_CLASSES.extend(
-        ["%s.%s" % (m.__name__, mc) for mc in getattr(m, 'MIDDLEWARE_CLASSES', [])]
-                          ) for m in MODULE_LIST]
-
-[TEMPLATE_LOADERS.extend(
-        ["%s.%s" % (m.__name__, tl) for tl in getattr(m, 'TEMPLATE_LOADERS', [])]
-                          ) for m in MODULE_LIST]
-
 
 INSTALLED_APPS = [
     'django.contrib.auth',

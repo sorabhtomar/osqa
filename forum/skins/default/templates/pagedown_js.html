@@ -1,7 +1,7 @@
-{% load i18n extra_tags %}
-<script type='text/javascript' src='{% media  "/media/pagedown/Markdown.Converter.js" %}'></script>
-<script type='text/javascript' src='{% media  "/media/pagedown/Markdown.Editor.js" %}'></script>
-<script type='text/javascript' src='{% media  "/media/pagedown/Markdown.Sanitizer.js" %}'></script>
+{% load i18n staticfiles %}
+<script type='text/javascript' src='{% static "pagedown/Markdown.Converter.js" %}'></script>
+<script type='text/javascript' src='{% static "pagedown/Markdown.Editor.js" %}'></script>
+<script type='text/javascript' src='{% static "pagedown/Markdown.Sanitizer.js" %}'></script>
 <script type="text/javascript">
 $(function() {
     $('#wmd-input:not(.processed)').TextAreaResizer();

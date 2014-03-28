@@ -4,9 +4,10 @@
 {% load extra_filters %}
 {% load humanize %}
 {% load user_tags %}
+{% load staticfiles %}
 {% block userjs %}
-       <script type='text/javascript' src='{% media  "/media/js/excanvas.js" %}'></script>
-       <script type='text/javascript' src='{% media  "/media/js/jquery.flot.js" %}'></script>
+       <script type='text/javascript' src='{% static "js/excanvas.js" %}'></script>
+       <script type='text/javascript' src='{% static "js/jquery.flot.js" %}'></script>
        
        <script type="text/javascript">
         $().ready(function(){

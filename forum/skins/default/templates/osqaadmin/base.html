@@ -5,8 +5,8 @@
 {% block title %}{% trans "Site Administration" %}{% endblock %}
 
 {% block forejs %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{% media "/media/style/admin.css" %}"/>
-    <script type="text/javascript" src="{% media "/media/js/osqa.admin.js" %}"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static "style/admin.css" %}"/>
+    <script type="text/javascript" src="{% static "js/osqa.admin.js" %}"></script>
     {% block adminjs %}{% endblock %}
 {% endblock %}
 

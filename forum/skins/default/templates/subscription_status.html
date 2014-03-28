@@ -1,5 +1,5 @@
 {% spaceless %}
-{% load i18n extra_tags %}
+{% load i18n staticfiles %}
 <h3 class="subtitle">{% trans "Follow this question" %}</h3>
 <strong>{% trans "By Email" %}:</strong>
 {% if request.user.is_authenticated %}
@@ -31,12 +31,12 @@
 {% endif %}
 <strong>{% trans "By RSS" %}:</strong>
 <p>
-    <a class="feed-icon" style="background-image:url('{% media "media/images/feed-icon-small.png" %}');"
+    <a class="feed-icon" style="background-image:url('{% static "images/feed-icon-small.png" %}');"
         href="{{ question.get_absolute_url }}?type=rss" title="{% trans "subscribe to answers" %}"></a>
     {% trans "Answers" %}
 </p>
 <p>
-    <a class="feed-icon" style="background-image:url('{% media "media/images/feed-icon-small.png" %}');"
+    <a class="feed-icon" style="background-image:url('{% static "images/feed-icon-small.png" %}');"
         href="{{ question.get_absolute_url }}?type=rss&comments=yes" title="{% trans "subscribe to comments and answers" %}"></a>
     {% trans "Answers and Comments" %}
 </p>

@@ -17,15 +17,15 @@
 {% block title %}{% spaceless %}{{ question.headline }}{% endspaceless %}{% endblock %}
 {% block forejs %}
         {% if not question.nis.closed %}
-        <script type='text/javascript' src='{% media  "/media/js/osqa.question.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/jquery.caret.js" %}'></script>
+        <script type='text/javascript' src='{% static "js/osqa.question.js" %}'></script>
+        <script type='text/javascript' src='{% static "js/jquery.caret.js" %}'></script>
 
         {% include "pagedown_js.html" %}
 
         {% if embed_youtube_videos %}
-        <script type='text/javascript' src='{% media  "/media/js/viewbox.js" %}'></script>
-        <script type='text/javascript' src='{% media  "/media/js/youtube.js" %}'></script>
-        <link rel="stylesheet" type="text/css" href="{% media  "/media/style/viewbox.css" %}" />
+        <script type='text/javascript' src='{% static "js/viewbox.js" %}'></script>
+        <script type='text/javascript' src='{% static "js/youtube.js" %}'></script>
+        <link rel="stylesheet" type="text/css" href="{% static "style/viewbox.css" %}" />
         {% endif %}
         {% endif %}
 
