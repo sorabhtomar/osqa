@@ -175,7 +175,7 @@ def tag(request, tag):
     # Create the combined context
     context = dict(question_context.items() + tag_context.items())
 
-    result = render_response('questions.html', context, request, page_template='questions_page.html', parent_template="base.html")
+    result = render_to_response('questions.html', context, context_instance=RequestContext(request))
     if any(t.id < 0 for t in tag_objs):
         # prevent search engines indexing these pages / link spam attacks
         result.status_code = 418 # I'm a teapot
